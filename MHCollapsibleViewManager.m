@@ -160,12 +160,12 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
     switch (type) {
         case CRUCellViewInteractionHeader:
             if(checked){
-            [cell setMHCellClickedWithAccessory:UITableViewCellAccessoryNone
+            [cell setCellClickedWithAccessory:UITableViewCellAccessoryNone
                                           style:UITableViewCellSelectionStyleGray
                                      labelColor:nil accessoryView:nil];
             }
             else{
-            [cell setMHCellDefaultsWithAccessory:UITableViewCellAccessoryNone
+            [cell setCellDefaultsWithAccessory:UITableViewCellAccessoryNone
                                            style:UITableViewCellSelectionStyleNone
                                       labelColor:nil accessoryView:nil];
             }
@@ -174,13 +174,13 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
         default:
         {
             if(checked){
-                [cell setMHCellClickedWithAccessory:UITableViewCellAccessoryCheckmark
+                [cell setCellClickedWithAccessory:UITableViewCellAccessoryCheckmark
                                               style:UITableViewCellSelectionStyleDefault
                                          labelColor:[UIColor blackColor] accessoryView:nil];
                 [cell changeCellStateWithToggle:checked];
             }
             else{
-                [cell setMHCellDefaultsWithAccessory:UITableViewCellAccessoryNone
+                [cell setCellDefaultsWithAccessory:UITableViewCellAccessoryNone
                                                style:UITableViewCellSelectionStyleNone
                                           labelColor:[UIColor blackColor] accessoryView:nil];
                 [cell changeCellStateWithToggle:checked];

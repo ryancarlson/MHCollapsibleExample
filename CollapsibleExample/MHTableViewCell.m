@@ -72,7 +72,7 @@
     return self;
 }
 
-- (void)setMHCellDefaultsWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view{
+- (void)setCellDefaultsWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view{
 
     self.defaultAccessoryType = accessory;
     self.defaultSelectionStyle = style;
@@ -84,7 +84,7 @@
     }
 }
 
-- (void)setMHCellClickedWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view{
+- (void)setCellClickedWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view{
     
     self.clickedAccessoryType = accessory;
     self.clickedSelectionStyle = style;

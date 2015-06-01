@@ -25,9 +25,9 @@ typedef NS_ENUM(NSUInteger, CRUCellViewInteractionType){
 //calls super first then sets defaults
 - (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 
-- (void)setMHCellDefaultsWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view;
+- (void)setCellDefaultsWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view;
 
-- (void)setMHCellClickedWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view;
+- (void)setCellClickedWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view;
 
 //Set the type after creating cell
 - (void)setCellViewInteractionWithType:(CRUCellViewInteractionType)type;

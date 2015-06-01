@@ -27,20 +27,19 @@
     MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
     
     //sends double array for filternames and single array for header lines
-    [labels setDataWithFilterNames:[[NSArray alloc] initWithObjects:[self returnLabelArray],nil] headerTitles:[[NSArray alloc] initWithObjects:@"Labels", nil]];
+    [labels setDataWithFilterNames:@[self.returnLabelArray] headerTitles:@[@"Labels"]];
     
     MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
     
-    NSArray *surveyAnswers = [[NSArray alloc] initWithObjects:[self returnSurveyArray], [self returnSurveyArray], [self returnSurveyArray], nil];
-    NSArray *surveyQuestions = [[NSArray alloc] initWithObjects:@"Survey 1", @"Survey 2", @"Survey 3", nil];
-    //Index 0 is title
-     [surveys setDataWithFilterNames:surveyAnswers headerTitles:surveyQuestions];
+    NSArray *surveyAnswers = @[@[self.returnSurveyArray], @[self.returnSurveyArray], @[self.returnSurveyArray]];
+    NSArray *surveyQuestions = @[@"Survey 1", @"Survey 2", @"Survey 3"];
+    [surveys setDataWithFilterNames:surveyAnswers headerTitles:surveyQuestions];
     surveyAnswers = nil;
     surveyQuestions = nil;
     
     MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
     //Index 0 is title
-    [interactions setDataWithFilterNames:[[NSArray alloc] initWithObjects:[self returnInteractionsArray],nil] headerTitles:[[NSArray alloc] initWithObjects:@"Interactions", nil]];
+    [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
     
     //ManagerArray stores each controller or manager
     managerArray = [NSMutableArray arrayWithObjects:labels, surveys, interactions, nil];
@@ -51,19 +50,19 @@
 //simply populates data since it's more complicated now
 - (NSArray*)returnLabelArray{
     
-    NSArray* filterData = [[NSArray alloc] initWithObjects: [[MHFilterLabel alloc] initLabelWithName:@"Freshman" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sophomore" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Junior" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Senior" checked:false interactionType:CRUCellViewInteractionCheckToggle], nil];
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Freshman" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sophomore" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Junior" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Senior" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     return filterData;
 }
 
 - (NSArray*)returnSurveyArray{
     
-    NSArray* filterData = [[NSArray alloc] initWithObjects: [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle], nil];
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     return filterData;
 }
 //simple populates data
 - (NSArray*)returnAssignedToArray{
     
-    NSArray* filterData = [[NSArray alloc] initWithObjects: [[MHFilterLabel alloc] initLabelWithName:@"Jan" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sue" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Andy" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Peggy" checked:false interactionType:CRUCellViewInteractionCheckToggle], nil];
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Jan" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sue" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Andy" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Peggy" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     return filterData;
 }
 
