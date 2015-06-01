@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		830349C31B0BBDCD000B03C0 /* MHCollapsibleSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 830349C21B0BBDCD000B03C0 /* MHCollapsibleSection.m */; };
 		8323EF391B0539C5006D2B63 /* MHFilterLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8323EF381B0539C5006D2B63 /* MHFilterLabel.m */; };
+		8389AA8B1B0A5CC1009CBAB3 /* MHTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8389AA8A1B0A5CC1009CBAB3 /* MHTableViewCell.m */; };
+		83ACD4871B190CF9000F6F05 /* MHCollapseDownArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 83ACD4851B190CF9000F6F05 /* MHCollapseDownArrow.png */; };
+		83ACD4881B190CF9000F6F05 /* MHCollapseUpArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 83ACD4861B190CF9000F6F05 /* MHCollapseUpArrow.png */; };
 		83D4CB0A1B023845001C9A72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB091B023845001C9A72 /* main.m */; };
 		83D4CB0D1B023845001C9A72 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB0C1B023845001C9A72 /* AppDelegate.m */; };
 		83D4CB101B023845001C9A72 /* CollapsibleExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB0E1B023845001C9A72 /* CollapsibleExample.xcdatamodeld */; };
@@ -19,8 +23,6 @@
 		83D4CB3F1B023875001C9A72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB311B023875001C9A72 /* FilterViewController.m */; };
 		83D4CB431B023875001C9A72 /* ContactTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB3A1B023875001C9A72 /* ContactTableViewController.m */; };
 		83D4CB441B023875001C9A72 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB3B1B023875001C9A72 /* Contact.m */; };
-		83E279F21B03E88600C6F406 /* upArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 83E279F11B03E88600C6F406 /* upArrow.png */; };
-		83E279F41B03E89400C6F406 /* downArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 83E279F31B03E89400C6F406 /* downArrow.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,8 +36,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		830349C11B0BBDCD000B03C0 /* MHCollapsibleSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHCollapsibleSection.h; sourceTree = "<group>"; };
+		830349C21B0BBDCD000B03C0 /* MHCollapsibleSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHCollapsibleSection.m; sourceTree = "<group>"; };
 		8323EF371B0539C5006D2B63 /* MHFilterLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHFilterLabel.h; sourceTree = "<group>"; };
 		8323EF381B0539C5006D2B63 /* MHFilterLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHFilterLabel.m; sourceTree = "<group>"; };
+		8389AA891B0A5CC1009CBAB3 /* MHTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTableViewCell.h; sourceTree = "<group>"; };
+		8389AA8A1B0A5CC1009CBAB3 /* MHTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHTableViewCell.m; sourceTree = "<group>"; };
+		83ACD4851B190CF9000F6F05 /* MHCollapseDownArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MHCollapseDownArrow.png; path = ../MHCollapseDownArrow.png; sourceTree = "<group>"; };
+		83ACD4861B190CF9000F6F05 /* MHCollapseUpArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MHCollapseUpArrow.png; path = ../MHCollapseUpArrow.png; sourceTree = "<group>"; };
 		83D4CB041B023845001C9A72 /* CollapsibleExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollapsibleExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D4CB081B023845001C9A72 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D4CB091B023845001C9A72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -56,8 +64,6 @@
 		83D4CB3B1B023875001C9A72 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = ../Contact.m; sourceTree = "<group>"; };
 		83D4CB3C1B023875001C9A72 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = ../Contact.h; sourceTree = "<group>"; };
 		83D4CB3D1B023875001C9A72 /* ContactTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactTableViewController.h; path = ../ContactTableViewController.h; sourceTree = "<group>"; };
-		83E279F11B03E88600C6F406 /* upArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = upArrow.png; path = ../upArrow.png; sourceTree = "<group>"; };
-		83E279F31B03E89400C6F406 /* downArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downArrow.png; path = ../downArrow.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,10 +160,14 @@
 		83D4CB461B024C03001C9A72 /* Object Types */ = {
 			isa = PBXGroup;
 			children = (
-				83E279F31B03E89400C6F406 /* downArrow.png */,
-				83E279F11B03E88600C6F406 /* upArrow.png */,
+				83ACD4851B190CF9000F6F05 /* MHCollapseDownArrow.png */,
+				83ACD4861B190CF9000F6F05 /* MHCollapseUpArrow.png */,
+				830349C11B0BBDCD000B03C0 /* MHCollapsibleSection.h */,
+				830349C21B0BBDCD000B03C0 /* MHCollapsibleSection.m */,
 				8323EF371B0539C5006D2B63 /* MHFilterLabel.h */,
 				8323EF381B0539C5006D2B63 /* MHFilterLabel.m */,
+				8389AA891B0A5CC1009CBAB3 /* MHTableViewCell.h */,
+				8389AA8A1B0A5CC1009CBAB3 /* MHTableViewCell.m */,
 				83D4CB3B1B023875001C9A72 /* Contact.m */,
 				83D4CB3C1B023875001C9A72 /* Contact.h */,
 			);
@@ -244,10 +254,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83ACD4881B190CF9000F6F05 /* MHCollapseUpArrow.png in Resources */,
 				83D4CB161B023845001C9A72 /* Main.storyboard in Resources */,
 				83D4CB1B1B023845001C9A72 /* LaunchScreen.xib in Resources */,
-				83E279F21B03E88600C6F406 /* upArrow.png in Resources */,
-				83E279F41B03E89400C6F406 /* downArrow.png in Resources */,
+				83ACD4871B190CF9000F6F05 /* MHCollapseDownArrow.png in Resources */,
 				83D4CB181B023845001C9A72 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,7 +283,9 @@
 				83D4CB441B023875001C9A72 /* Contact.m in Sources */,
 				83D4CB0A1B023845001C9A72 /* main.m in Sources */,
 				83D4CB3F1B023875001C9A72 /* FilterViewController.m in Sources */,
+				8389AA8B1B0A5CC1009CBAB3 /* MHTableViewCell.m in Sources */,
 				83D4CB3E1B023875001C9A72 /* MHCollapsibleViewManager.m in Sources */,
+				830349C31B0BBDCD000B03C0 /* MHCollapsibleSection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

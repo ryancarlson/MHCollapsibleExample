@@ -8,10 +8,12 @@
 
 #import "FilterViewController.h"
 #import "MHCollapsibleViewManager.h"
-#import "Label.h"
-#import "AssignedTo.h"
 
 @interface FilterViewController()
+
+- (NSArray*)returnLabelArray;
+- (NSArray*)returnAssignedToArray;
+- (NSArray*)returnSurveyArray;
 
 @end
 
@@ -22,18 +24,53 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initalizeManager:UITableViewRowAnimationMiddle title:@"Labels" tableView:self.tableView];
-    //Index 0 is title
-    [labels initializeData:[NSMutableArray arrayWithObjects:@"Freshman", @"Sophomore", @"Junior", @"Senior", nil]];
+    MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
     
-    MHCollapsibleViewManager *assignTo = [[MHCollapsibleViewManager alloc] initalizeManager:UITableViewRowAnimationMiddle title:@"Assigned To" tableView:self.tableView];
+    //sends double array for filternames and single array for header lines
+    [labels setDataWithFilterNames:@[self.returnLabelArray] headerTitles:@[@"Labels"]];
+    
+    MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
+    
+    NSArray *surveyAnswers = @[@[self.returnSurveyArray], @[self.returnSurveyArray], @[self.returnSurveyArray]];
+    NSArray *surveyQuestions = @[@"Survey 1", @"Survey 2", @"Survey 3"];
+    [surveys setDataWithFilterNames:surveyAnswers headerTitles:surveyQuestions];
+    surveyAnswers = nil;
+    surveyQuestions = nil;
+    
+    MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
     //Index 0 is title
-    [assignTo  initializeData:[NSMutableArray arrayWithObjects:@"Jan", @"Andy", @"Peggy", @"Maggie", nil]];
+    [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
     
     //ManagerArray stores each controller or manager
-    managerArray = [NSMutableArray arrayWithObjects:labels, assignTo, nil];
-    assignTo = nil;
+    managerArray = [NSMutableArray arrayWithObjects:labels, surveys, interactions, nil];
+    surveys = nil;
     labels = nil;
+}
+
+//simply populates data since it's more complicated now
+- (NSArray*)returnLabelArray{
+    
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Freshman" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sophomore" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Junior" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Senior" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
+    return filterData;
+}
+
+- (NSArray*)returnSurveyArray{
+    
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
+    return filterData;
+}
+//simple populates data
+- (NSArray*)returnAssignedToArray{
+    
+    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Jan" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sue" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Andy" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Peggy" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
+    return filterData;
+}
+
+//simple populates data
+- (NSArray*)returnInteractionsArray{
+    
+    NSArray* filterData = [[NSArray alloc] initWithObjects: [[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism Decisions" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Holy Spirit Presentation" checked:false interactionType:CRUCellViewInteractionCheckToggle], nil];
+    return filterData;
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,13 +83,8 @@
     //Return the number of rows in the section.
     MHCollapsibleViewManager *manager = [managerArray objectAtIndex:section];
     //There will at least be one because of the header
-    NSInteger numOfRows = 1;
-    //numOfRows does not include header, so add the initial (1) to the total
-    //of the "children" or normal rows
-    if(manager.expanded)
-        numOfRows += manager.numOfRows;
-    manager = nil;
-    
+    NSUInteger numOfRows = (NSInteger) manager.numOfRows;
+    NSLog(@"%d%@", (int)numOfRows, manager.title);
     return numOfRows;
 }
 
@@ -62,12 +94,14 @@
    return [managerArray count];
 }
 
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //temp manager to get create and return cell
     MHCollapsibleViewManager *manager = [self.managerArray objectAtIndex:indexPath.section];
     
-    return [manager returnCell:indexPath tableView:tableView];
+    UITableViewCell * cell = (UITableViewCell*)[manager returnCellWithIndex:indexPath tableView:tableView];
+    
+    return cell;
     
    
 }
@@ -77,6 +111,13 @@
    
     //manager handles look and keeping track if whatever cell has been selected
     [manager selectedRowAtIndexPath:tableView indexPath:indexPath];
+    
+    //Fix ios 7 bug via stackoverflow:
+    //http://stackoverflow.com/questions/19212476/uitableview-separator-line-disappears-when-selecting-cells-in-ios7
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    manager = nil;
 }
 
 

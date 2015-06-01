@@ -8,15 +8,20 @@
 
 
 #import <Foundation/Foundation.h>
+#import "MHTableViewCell.h"
 
-@interface MHFilterLabel : NSObject {
-    NSString *name;
-    BOOL checked;
-}
+@interface MHFilterLabel : NSObject
 
-@property (nonatomic, copy) NSString *name;
-@property (nonatomic) BOOL checked;
+- (instancetype)initLabelWithName:(NSString*)name checked:(BOOL)checked interactionType:(CRUCellViewInteractionType)type;
 
-+ (id)constructLabel:(NSString*)name checked:(BOOL)checked;
+//Getters
+
+- (BOOL)selectedCell;
+
+- (void)toggleChecked;
+
+- (NSString*)labelName;
+
+- (CRUCellViewInteractionType)labelType;
 
 @end
