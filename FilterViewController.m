@@ -27,11 +27,11 @@
     MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
     
     //sends double array for filternames and single array for header lines
-    [labels setDataWithFilterNames:@[self.returnLabelArray] headerTitles:@[@"Labels"]];
+    [labels setDataWithFilterNames:self.returnLabelArray headerTitles:@[@"Labels"]];
     
     MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
     
-    NSArray *surveyAnswers = @[@[self.returnSurveyArray], @[self.returnSurveyArray], @[self.returnSurveyArray]];
+    NSArray *surveyAnswers = @[self.returnSurveyArray, self.returnSurveyArray, self.returnSurveyArray];
     NSArray *surveyQuestions = @[@"Survey 1", @"Survey 2", @"Survey 3"];
     [surveys setDataWithFilterNames:surveyAnswers headerTitles:surveyQuestions];
     surveyAnswers = nil;
