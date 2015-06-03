@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MHCollapsibleViewManager.h"
 
-@interface FilterViewController : UITableViewController
+@interface FilterViewController : UITableViewController<MHCollapibleViewManagerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *managerArray;
 

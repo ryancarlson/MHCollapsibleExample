@@ -13,7 +13,11 @@
 #import <UIKit/UIKit.h>
 #import "MHFilterLabel.h"
 
-@interface MHCollapsibleSection : NSObject
+@interface MHCollapsibleSection : NSObject <UIPickerViewDelegate,
+                                            UIPickerViewDelegate,
+                                            UITextViewDelegate,
+                                            UITableViewDelegate,
+                                            UITableViewDataSource>
 
 //Setters
 - (instancetype) initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
@@ -59,5 +63,17 @@
 //resets range with new location, the sections in a hierarchy
 //affect each others locations due to accordian
 - (void)resetRangeWithNum:(NSUInteger)newLocation;
+
+
+//Modal Changes
+
+//saves changes from modal
+- (void) saveChanges;
+
+//cancels changes
+- (void) cancelChanges;
+
+//clears data (for tableview/checklist type)
+- (void) clearSelections;
 
 @end

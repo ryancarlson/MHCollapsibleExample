@@ -15,8 +15,30 @@
 #import <UIKit/UIKit.h>
 #import "MHFilterLabel.h"
 #import "MHTableViewCell.h"
+#import "MHCollapsibleSection.h"
 
+@protocol MHCollapibleViewManagerDelegate <NSObject>
+
+@required
+
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+
+@end
+
+@interface MHCollapsibleViewManagerDeletegate : NSObject{
+    
+    id <MHCollapibleViewManagerDelegate> _delegate;
+}
+
+
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+
+@end
+
+//Super delegate
 @interface MHCollapsibleViewManager : NSObject
+
+@property (nonatomic, strong) id delegate;
 
 //INIT METHODS
 
