@@ -154,7 +154,14 @@
     [checkListLabel setLabelDescriptionWithString:@"Select survey answers"];
     [checkListLabel setResultsWithDictionary:surveyAnswers];
     
-    NSArray* filterData = @[checkListLabel,[[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
+    MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckList];
+    NSDictionary *surveyAnswers2 = [[NSDictionary alloc] initWithObjects:@[@NO, @NO, @NO, @NO, @NO] forKeys:self.returnSurveyAnswers];
+    
+    //optional description, show as section title on modal
+    [checkListLabel2 setLabelDescriptionWithString:@"Select survey answers"];
+    [checkListLabel2 setResultsWithDictionary:surveyAnswers2];
+    
+    NSArray* filterData = @[checkListLabel,checkListLabel2, [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     
     checkListLabel = nil;
     surveyAnswers = nil;

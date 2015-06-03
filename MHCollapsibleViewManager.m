@@ -265,6 +265,7 @@
                         //NOTE: this flips the expanded boolean and then returns it
                         BOOL check = [section toggleCheckAndReturnWithIndex:indexRow];
                         [cell changeCellStateWithToggle:check];
+                        [section setCurrentModalIndexWithRow:indexRow];
                         //call delegate to create modal for checklist
                         //section should delegate views/data on modal
                         [self.delegate createModalWithType:type section:section row:indexRow];

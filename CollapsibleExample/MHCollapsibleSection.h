@@ -64,6 +64,9 @@
 //affect each others locations due to accordian
 - (void)resetRangeWithNum:(NSUInteger)newLocation;
 
+//Sets the current modal index to keep track of what the modal belongs to
+- (void) setCurrentModalIndexWithRow:(NSUInteger)row;
+
 
 //Modal Changes
 
@@ -75,5 +78,6 @@
 
 //clears data (for tableview/checklist type)
 - (void) clearSelections;
+
 
 @end
