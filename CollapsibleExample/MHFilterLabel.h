@@ -39,7 +39,7 @@
 - (void)toggleCheckedValueForRow:(NSUInteger)row;
 
 //Setter for results dictionary, must be called for label types with modals
-- (void)setResultsWithDictionary:(NSDictionary *)results;
+- (void)setResultsWithKeyArray:(NSArray *)resultKeys resultValues:(NSArray*)resultValues;
 
 //Call if the modal has a description
 //For a tableview, this is the section title

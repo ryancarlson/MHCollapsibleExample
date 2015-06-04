@@ -255,8 +255,10 @@
     else{
         
         switch (type) {
+            case CRUCellViewInteractionPicker:{
+                
+            }
             case CRUCellViewInteractionCheckList:
-            case CRUCellViewInteractionPicker:
             case CRUCellViewInteractionTextBox:
             {
                 [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){

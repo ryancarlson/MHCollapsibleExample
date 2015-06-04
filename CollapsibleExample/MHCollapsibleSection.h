@@ -14,7 +14,7 @@
 #import "MHFilterLabel.h"
 
 @interface MHCollapsibleSection : NSObject <UIPickerViewDelegate,
-                                            UIPickerViewDelegate,
+                                            UIPickerViewDataSource,
                                             UITextViewDelegate,
                                             UITableViewDelegate,
                                             UITableViewDataSource>

@@ -133,7 +133,30 @@
 #pragma PickerViewDelegate
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     
+    
+    
 }
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    NSUInteger numRows = label.numOfRows;
+    label = nil;
+    return numRows;
+}
+
+- (NSString*)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    NSString *resultKey = [label returnResultKeyAtRow:row];
+    label = nil;
+    return resultKey;
+}
+
 
 #pragma TableViewDelegate
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{

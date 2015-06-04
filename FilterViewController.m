@@ -71,8 +71,8 @@
     
     switch (cellType) {
             
-        case CRUCellViewInteractionCheckList:
-        {
+        case CRUCellViewInteractionCheckList:{
+            
             UITableViewController *tableViewController = [[UITableViewController alloc] initWithStyle:UITableViewStyleGrouped];
             
             //section will delegate displaying cell selects, etc.
@@ -96,6 +96,28 @@
             
         }
         break;
+        case CRUCellViewInteractionPicker:{
+            
+            UIPickerView *picker = [[UIPickerView alloc] init];
+            picker.delegate = section;
+            picker.dataSource = section;
+            
+            UIViewController *pickerViewController = [[UIViewController alloc] init];
+            pickerViewController.view.backgroundColor = [UIColor whiteColor];
+            pickerViewController.navigationItem.title = [section returnLabelNameAtRow:row];
+            pickerViewController.navigationItem.rightBarButtonItem = save;
+            pickerViewController.navigationItem.leftBarButtonItem = cancel;
+            [pickerViewController.view addSubview:picker];
+            
+            //navigation controller for handling the back/forth of the modal
+            UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pickerViewController];
+            [self presentViewController:navigationController animated:YES completion:nil];
+            
+            navigationController = nil;
+            pickerViewController = nil;
+            
+            
+        }
             
         default:
             break;
@@ -135,7 +157,7 @@
     
 }
 - (NSArray*)returnSurveyAnswers{
-    return @[@"Answer 1", @"Answer2", @"Answer3", @"Answer4", @"Answer 5"];
+    return @[@"Answer 1", @"Answer 2", @"Answer 3", @"Answer 4", @"Answer 5"];
 }
 
 //simply populates data since it's more complicated now
@@ -148,23 +170,28 @@
 - (NSArray*)returnSurveyArray{
     
     MHFilterLabel *checkListLabel = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckList];
-    NSDictionary *surveyAnswers = [[NSDictionary alloc] initWithObjects:@[@NO, @NO, @NO, @NO, @NO] forKeys:self.returnSurveyAnswers];
     
     //optional description, show as section title on modal
     [checkListLabel setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel setResultsWithDictionary:surveyAnswers];
+    [checkListLabel setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
     
-    MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionCheckList];
-    NSDictionary *surveyAnswers2 = [[NSDictionary alloc] initWithObjects:@[@NO, @NO, @NO, @NO, @NO] forKeys:self.returnSurveyAnswers];
+    MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionPicker];
     
     //optional description, show as section title on modal
     [checkListLabel2 setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel2 setResultsWithDictionary:surveyAnswers2];
+    [checkListLabel2 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
     
-    NSArray* filterData = @[checkListLabel,checkListLabel2, [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 4" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
+    MHFilterLabel *checkListLabel3 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckList];
+    
+    //optional description, show as section title on modal
+    [checkListLabel3 setLabelDescriptionWithString:@"Select survey answers"];
+    [checkListLabel3 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
+    
+    NSArray* filterData = @[checkListLabel,checkListLabel2, checkListLabel3];
     
     checkListLabel = nil;
-    surveyAnswers = nil;
+    checkListLabel2 = nil;
+    checkListLabel3 = nil;
     
     return filterData;
 }
