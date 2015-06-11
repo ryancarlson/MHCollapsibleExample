@@ -14,6 +14,8 @@
 - (NSArray*)returnAssignedToArray;
 - (NSArray*)returnSurveyArray;
 - (NSArray*)returnSurveyAnswers;
+
+//Handles clear, save and cancel for modals
 - (void)saveChangesForCurrentSection;
 - (void)cancelChangesForCurrentSection;
 - (void)clearChangesForCurrentSection;
@@ -28,6 +30,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self createManagersAndPopulateData];
+
+}
+
+//Can be overwritten or added onto since the objects exist on the class
+//rather than in the method
+- (void)setHalfModalViewLook{
+    
+    self.modalOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+    self.modalOverlay.alpha = 0;
+    self.modalOverlay.backgroundColor = [UIColor blackColor];
+    self.navigationController.toolbarHidden = NO;
+    self.modalCurrentlyShown = NO;
+}
+
+//Instatiate and create managers in this method while also populating the data to give to managers
+//the end result should do the following: Managers in an array, each manager has a delegate of this controller
+// Methods to call: initManagerWithAnimation, setDataFilterNames, setSubtitleTextForSectionsWithString
+- (void)createManagersAndPopulateData{
+    
     MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
     
     //sends double array for filternames and single array for header lines
@@ -36,7 +58,7 @@
     MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
     
     NSArray *surveyQuestions = @[self.returnSurveyArray, self.returnSurveyArray, self.returnSurveyArray];
-    NSArray *surveyList = @[@"Survey 1", @"Survey 2", @"Survey 3"];
+    NSArray *surveyList = @[@"Preview Weekend - Technology", @"Survey for:Lab", @"Predefined Questions"];
     [surveys setDataWithFilterNames:surveyQuestions headerTitles:surveyList];
     surveyList = nil;
     surveyQuestions = nil;
@@ -44,6 +66,12 @@
     MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
     //Index 0 is title
     [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
+    
+    //do not do plural, just singleton
+    //this identifies uniquely what the filters are
+    [labels setSubtitleTextForSectionsWithString:@"label" rootText:@"label" managerIndex:0];
+    [surveys setSubtitleTextForSectionsWithString:@"question" rootText:@"survey" managerIndex:1];
+    [interactions setSubtitleTextForSectionsWithString:@"interaction" rootText:@"interaction" managerIndex:2];
     
     //ManagerArray stores each controller or manager
     labels.delegate = self;
@@ -53,21 +81,69 @@
     
     surveys = nil;
     labels = nil;
+    
+}
 
+- (IBAction)buttonTapped:(UIBarButtonItem*)sender{
+    
+    if([sender.title isEqualToString: @"Clear"]){
+        
+        if(self.modalCurrentlyShown){
+            //clear just shown on modal, the temp storage
+            //is cleared with this method
+            [self clearChangesForCurrentSection];
+        }
+        else{
+            
+            //This is a hard clear in a sense all labels and their results (not temp results) will get cleared
+            [self.managerArray enumerateObjectsUsingBlock:^(MHCollapsibleViewManager *manager, NSUInteger index, BOOL *stop){
+                [manager clearAllData];
+            }];
+            //reload the entire table since multiple managers
+            //could have been affected by the clear
+            [self.tableView reloadData];
+        }
+    }
+    else if ([sender.title isEqualToString: @"Save"]){
+        
+        //Loop through the managers and get a MHPackagedFilter for each
+        //these are concatonated. MHPackagedFilter contains key/value pairs and can have a hierarchy
+        //depending if the manager had to create multiple sections
+        [self.managerArray enumerateObjectsUsingBlock:^(MHCollapsibleViewManager *manager, NSUInteger index, BOOL *stop){
+            NSMutableArray *filter = manager.returnPackagedFilter;
+            if(filter != nil){
+                [self.combinedFilters addObjectsFromArray:filter];
+            }
+        }];
+        
+        //Now the data is stored in an array of MHPackagedFilters, with key/value pairs
+        //They can be parsed and packaged to whatever API needs to be called
+        //For a subclass, just call super on this class and then handle the combinedFilters array accordingly
+        
+    }
+    else if([sender.title isEqualToString:@"Cancel"]){
+        
+        //dismiss modal, nothing needs to be sent to the search view controller or wherever the filter gets sent
+        self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 #pragma Manager Delegate
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection *)section row:(NSUInteger)row{
     
     self.currentSection = section;
     self.currentModalType = cellType;
+    self.currentRowPath = rowPath;
+    self.modalCurrentlyShown = YES;
     
     //Not all will need these buttons but most will have them in common
     UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save"
                                                             style:UIBarButtonItemStylePlain target:self action:@selector(saveChangesForCurrentSection)];
     UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                style:UIBarButtonItemStylePlain target:self action:@selector(cancelChangesForCurrentSection)];
-    UIBarButtonItem *clear =[[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStylePlain target:self action:@selector(clearChangesForCurrentSection)];
+    
+    UIBarButtonItem *clear = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
+                                                               style:UIBarButtonItemStylePlain target:self action:@selector(clearChangesForCurrentSection)];
     
     switch (cellType) {
             
@@ -81,10 +157,6 @@
             tableViewController.tableView.dataSource = section;
             
             //tableviewcontroller has save, cancel and clear buttons
-            tableViewController.navigationItem.title = [section returnLabelNameAtRow:row];
-            tableViewController.navigationItem.rightBarButtonItem = save;
-            tableViewController.navigationItem.leftBarButtonItem = cancel;
-            [tableViewController setToolbarItems:@[clear]];
 
             //navigation controller for handling the back/forth of the modal
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:tableViewController];
@@ -95,7 +167,6 @@
             tableViewController = nil;
             
         }
-        break;
         case CRUCellViewInteractionPicker:{
             
             UIPickerView *picker = [[UIPickerView alloc] init];
@@ -103,16 +174,9 @@
             picker.dataSource = section;
             
             UIViewController *pickerViewController = [[UIViewController alloc] init];
-            pickerViewController.view.backgroundColor = [UIColor whiteColor];
-            pickerViewController.navigationItem.title = [section returnLabelNameAtRow:row];
-            pickerViewController.navigationItem.rightBarButtonItem = save;
-            pickerViewController.navigationItem.leftBarButtonItem = cancel;
             [pickerViewController.view addSubview:picker];
             
-            //navigation controller for handling the back/forth of the modal
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pickerViewController];
-            [self presentViewController:navigationController animated:YES completion:nil];
-            
             navigationController = nil;
             pickerViewController = nil;
             
@@ -125,28 +189,26 @@
     
 }
 
-- (void)saveChangesForCurrentSection{
+    }
+    }
+    }
 
+
+    
     [self.currentSection saveChanges];
 
-    self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)cancelChangesForCurrentSection{
     
     [self.currentSection cancelChanges];
     
-    self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)clearChangesForCurrentSection{
     
     [self.currentSection clearSelections];
     
-    UINavigationController *navigationController = (UINavigationController*)self.presentedViewController;
-    if([navigationController.topViewController isKindOfClass:[UITableViewController class]]){
         
         UITableViewController *tableViewController = (UITableViewController*)navigationController.topViewController;
         //since the checkmarks have been cleared, reload the table to show the clear affect
@@ -156,36 +218,27 @@
     }
     
 }
+
 - (NSArray*)returnSurveyAnswers{
-    return @[@"Answer 1", @"Answer 2", @"Answer 3", @"Answer 4", @"Answer 5"];
 }
 
 //simply populates data since it's more complicated now
 - (NSArray*)returnLabelArray{
     
-    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Freshman" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sophomore" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Junior" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Senior" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     return filterData;
 }
 
 - (NSArray*)returnSurveyArray{
     
-    MHFilterLabel *checkListLabel = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckList];
     
     //optional description, show as section title on modal
     [checkListLabel setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
     
-    MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionPicker];
     
     //optional description, show as section title on modal
     [checkListLabel2 setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel2 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
     
-    MHFilterLabel *checkListLabel3 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckList];
     
-    //optional description, show as section title on modal
-    [checkListLabel3 setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel3 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
     
     NSArray* filterData = @[checkListLabel,checkListLabel2, checkListLabel3];
     
