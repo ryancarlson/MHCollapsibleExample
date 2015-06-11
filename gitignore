@@ -11,3 +11,4 @@ profile
 DerivedData
 .idea/
 *.xcuserstate
+*.xcbkptlist

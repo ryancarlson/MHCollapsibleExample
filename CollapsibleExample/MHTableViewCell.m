@@ -42,11 +42,25 @@
 
 - (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     
+    //defaults
+    self.defaultAccessoryType = UITableViewCellAccessoryNone;
+    self.defaultSelectionStyle = UITableViewCellSelectionStyleNone;
+    
+    self.clickedSelectionStyle = UITableViewCellSelectionStyleGray;
+    
+    //label color
+    self.defaultTextLabelColor = [UIColor blackColor];
+    
     if([reuseIdentifier isEqualToString:@"Header"]){
         self.clickedAccessoryType = UITableViewCellAccessoryNone;
         self.clickedTextLabelColor = [[UIColor alloc] initWithRed:0 green:.48 blue:1.0 alpha:1.0];
         self.clickedAccessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"MHCollapseUpArrow"]];
         self.defaultAccessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"MHCollapseDownArrow"]];
+    }
+    else if([reuseIdentifier isEqualToString:@"Indicator"]){
+        
+        self.clickedAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        self.defaultAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else{
         //clicked non header cell
@@ -55,17 +69,8 @@
     
     reuseIdentifier = @"MHCell";
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    self.accessoryType = UITableViewCellAccessoryNone;
-    self.selectionStyle = UITableViewCellSelectionStyleGray;
-    
-    //defaults
-    self.defaultAccessoryType = UITableViewCellAccessoryNone;
-    self.defaultSelectionStyle = UITableViewCellSelectionStyleGray;
-    
-    self.clickedSelectionStyle = UITableViewCellSelectionStyleGray;
-    
-    //label color
-    self.defaultTextLabelColor = [UIColor blackColor];
+    self.accessoryType = self.defaultAccessoryType;
+    self.selectionStyle = self.defaultSelectionStyle;
     
     self.checked = false;
     self.backgroundColor = [UIColor whiteColor];
@@ -96,41 +101,22 @@
     }
 }
 
-
-
 - (void) changeCellStateWithToggle:(BOOL)toggle{
     
     self.checked = toggle;
     
     if(self.checked){
-        switch (self.cellType) {
-            case CRUCellViewInteractionCheckToggle:
-            case CRUCellViewInteractionHeader:
-            {
-                self.accessoryType = self.clickedAccessoryType;
-                self.accessoryView = self.clickedAccessoryView;
-                self.textLabel.textColor = self.clickedTextLabelColor;
-                self.selectionStyle = self.clickedSelectionStyle;
-            }
-                break;
-            default:
-                break;
-        }
+        
+        self.accessoryType = self.clickedAccessoryType;
+        self.accessoryView = self.clickedAccessoryView;
+        self.textLabel.textColor = self.clickedTextLabelColor;
+        self.selectionStyle = self.clickedSelectionStyle;
     }
     else{
-        switch (self.cellType) {
-            case CRUCellViewInteractionCheckToggle:
-            case CRUCellViewInteractionHeader:
-            {
-                self.accessoryType = self.defaultAccessoryType;
-                self.accessoryView = self.defaultAccessoryView;
-                self.textLabel.textColor = self.defaultTextLabelColor;
-                self.selectionStyle = self.defaultSelectionStyle;
-            }
-                break;
-            default:
-                break;
-        }
+        self.accessoryType = self.defaultAccessoryType;
+        self.accessoryView = self.defaultAccessoryView;
+        self.textLabel.textColor = self.defaultTextLabelColor;
+        self.selectionStyle = self.defaultSelectionStyle;
     }
         
 }

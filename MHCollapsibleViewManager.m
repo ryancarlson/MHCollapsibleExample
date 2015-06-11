@@ -7,7 +7,13 @@
 //
 
 #import "MHCollapsibleViewManager.h"
-#import "MHCollapsibleSection.h"
+
+@implementation MHCollapsibleViewManagerDeletegate
+
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row{
+    //do stuff
+}
+@end
 
 @interface MHCollapsibleViewManager()
 
@@ -21,14 +27,6 @@
 //expanded = true means children rows are shown
 //expanded = false means children rows are not shown
 @property (nonatomic) BOOL expanded;
-
-//For keeping track of indexes of cellStyles
-typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
-    CRUCollapsibleClickedHeaderCell,
-    CRUCollapsibleHeaderCell,
-    CRUCollapsibleClickedNormalCell,
-    CRUCollapsibleNormalCell,
-};
 
 
 - (void) toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
@@ -149,16 +147,24 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
 - (MHTableViewCell*)createCellWithtableView:(UITableView*)tableView interactionType:(CRUCellViewInteractionType)type checked:(BOOL)checked{
     
     NSString *cellIdentifier = @"Cell";
+
     MHTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if(type == CRUCellViewInteractionHeader){
         cellIdentifier = @"Header";
+    }
+    else if(type != CRUCellViewInteractionCheckToggle){
+        cellIdentifier = @"Indicator";
     }
     if(!cell){
         cell = [[MHTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
     }
     [cell setCellViewInteractionWithType:type];
     switch (type) {
-        case CRUCellViewInteractionHeader:
+        case CRUCellViewInteractionCheckList:{
+            [cell changeCellStateWithToggle:checked];
+        }
+            break;
+        case CRUCellViewInteractionHeader:{
             if(checked){
             [cell setCellClickedWithAccessory:UITableViewCellAccessoryNone
                                           style:UITableViewCellSelectionStyleGray
@@ -170,9 +176,9 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
                                       labelColor:nil accessoryView:nil];
             }
             [cell changeCellStateWithToggle:checked];
+        }
             break;
-        default:
-        {
+        default:{
             if(checked){
                 [cell setCellClickedWithAccessory:UITableViewCellAccessoryCheckmark
                                               style:UITableViewCellSelectionStyleDefault
@@ -249,9 +255,30 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
     else{
         
         switch (type) {
-            //Probably will switch this to default and the other types will trigger their events
-            case CRUCellViewInteractionHeader:
-            case CRUCellViewInteractionCheckToggle:
+            case CRUCellViewInteractionPicker:{
+                
+            }
+            case CRUCellViewInteractionCheckList:
+            case CRUCellViewInteractionTextBox:
+            {
+                [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+                    
+                    if(section.returnExpanded && [section rowNumInRange:indexRow]){
+                        //NOTE: this flips the expanded boolean and then returns it
+                        BOOL check = [section toggleCheckAndReturnWithIndex:indexRow];
+                        [cell changeCellStateWithToggle:check];
+                        [section setCurrentModalIndexWithRow:indexRow];
+                        //call delegate to create modal for checklist
+                        //section should delegate views/data on modal
+                        [self.delegate createModalWithType:type section:section row:indexRow];
+                        *stop = YES;//kick out since we found the row
+                    }
+                }];
+            }
+            break;
+            
+            //Header and Toggle types (non modal)
+            default:
             {
                 [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
                     //toggle the header in collapsed state or expanded state
@@ -262,7 +289,7 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
                         }
                         [section toggleCollapse:tableView indexPath:indexPath];
                         [cell changeCellStateWithToggle:section.returnExpanded];
-                       
+                        
                         *stop = YES;//kick out since we found the row
                     }
                     //toggle checkmark for check toggle
@@ -274,9 +301,6 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
                     }
                 }];
             }
-            break;
-                
-            default:
                 break;
         }//end switch
     }
@@ -291,8 +315,6 @@ typedef NS_ENUM(NSUInteger, CRUCollapsibleManagerCellTypes){
     
     __block NSUInteger newLocation = 0;
     __block NSUInteger previousNumOfRows = 1;
-    
-    NSLog(@"%@", @"In updateOther");
     
     [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
   
