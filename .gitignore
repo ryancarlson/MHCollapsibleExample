@@ -16,3 +16,5 @@ CollapsibleExample.xcodeproj/xcuserdata/lizzyrandall.xcuserdatad/xcdebugger/Brea
 CollapsibleExample.xcodeproj/project.xcworkspace/xcuserdata/lizzyrandall.xcuserdatad/UserInterfaceState.xcuserstate
 
 *.xcuserstate
+
+CollapsibleExample/SubclassedFilterViewController.m
