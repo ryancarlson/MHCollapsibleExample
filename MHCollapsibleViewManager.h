@@ -16,12 +16,13 @@
 #import "MHFilterLabel.h"
 #import "MHTableViewCell.h"
 #import "MHCollapsibleSection.h"
+#import "MHPackagedFilter.h"
 
 @protocol MHCollapibleViewManagerDelegate <NSObject>
 
 @required
 
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath;
 
 @end
 
@@ -31,7 +32,7 @@
 }
 
 
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath;
 
 @end
 
@@ -56,6 +57,8 @@
 //Can be used to override a manager's array of data
 - (void) setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles;
 
+- (void)setSubtitleTextForSectionsWithString:(NSString*)subtitle rootText:(NSString*)rootText managerIndex:(NSUInteger)managerIndex;
+
 //RETURN METHODS
 
 - (UITableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView;
@@ -68,6 +71,14 @@
 - (NSUInteger)numOfRows;
 
 - (NSUInteger)numOfSections;
+
+- (void)clearAllData;
+
+- (BOOL)sectionExistsInManager:(MHCollapsibleSection*)comparisonSection;
+
+//Returns an array of filters for this manager in key value pairs
+//these can be parsed to pass onto api calls or apply with predicate for search
+- (NSMutableArray*)returnPackagedFilter;
 
 - (NSString*)title;
 

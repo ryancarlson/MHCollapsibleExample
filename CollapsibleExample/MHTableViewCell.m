@@ -40,7 +40,7 @@
     [super setSelected:selected animated:animated];
 }
 
-- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     
     //defaults
     self.defaultAccessoryType = UITableViewCellAccessoryNone;
@@ -101,7 +101,7 @@
     }
 }
 
-- (void) changeCellStateWithToggle:(BOOL)toggle{
+- (void)changeCellStateWithToggle:(BOOL)toggle{
     
     self.checked = toggle;
     

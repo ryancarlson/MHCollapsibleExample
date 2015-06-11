@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, CRUCellViewInteractionType){
 };
 
 //calls super first then sets defaults
-- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 
 - (void)setCellDefaultsWithAccessory:(UITableViewCellAccessoryType)accessory style:(UITableViewCellSelectionStyle)style labelColor:(UIColor*)color accessoryView:(UIView*)view;
 
@@ -46,6 +46,6 @@ typedef NS_ENUM(NSUInteger, CRUCellViewInteractionType){
 //  textLabel.textColor, textAlignment
 - (void)setCellLookWithMHCell:(UITableViewCell*)cell;
 
-- (void) changeCellStateWithToggle:(BOOL)toggle;
+- (void)changeCellStateWithToggle:(BOOL)toggle;
 
 @end

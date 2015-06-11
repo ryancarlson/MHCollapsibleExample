@@ -15,13 +15,15 @@
 
 @interface MHCollapsibleSection : NSObject <UIPickerViewDelegate,
                                             UIPickerViewDataSource,
-                                            UITextViewDelegate,
+                                            UITextFieldDelegate,
                                             UITableViewDelegate,
                                             UITableViewDataSource>
 
 //Setters
-- (instancetype) initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
+- (instancetype)initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
                      animation:(UITableViewRowAnimation)animation rowRange:(NSRange)rowRange;
+
+- (void)setSubtitleItemTextForSectionWithString:(NSString*)subTitleItemText;
 
 //Check methods
 
@@ -45,9 +47,34 @@
 
 - (BOOL)returnExpanded;
 
+- (void)setManagerIndexWithIndex:(NSUInteger)index;
+
+- (NSUInteger)returnManagerIndex;
+
 - (NSString*)title;
 
+- (NSString*)getIdentifier;
+
+- (NSString*)detailedHeaderSectionText;
+
+- (NSUInteger)selectedCountForSubTitleText;
+
+- (NSArray*)returnCopyOfFilterData;
+
+//This is not number of selected rows total since a checklist can have multiple selected
+//For each filter, if at least one selected is found for this section
+//count will be 1. If not this will return 0.
+- (NSUInteger)countOneSelectedRowForSubtitleText;
+
 - (NSUInteger)itemCount;
+
+- (NSUInteger)getCurrentFocusForPicker;
+
+- (NSString*)returnDescriptionWithRow:(NSUInteger)row;
+
+- (NSString*)getTextForTextArea;
+
+- (NSString*)getLabelDescription;
 
 //Changers
 
@@ -55,10 +82,10 @@
 - (BOOL)toggleCheckAndReturnWithIndex:(NSUInteger)row;
 
 //toggles expanded bool
-- (void) toggleExpanded;
+- (void)toggleExpanded;
 
 //inserts or deletes data from rows depending on expanded
-- (void) toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
+- (void)toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
 
 //resets range with new location, the sections in a hierarchy
 //affect each others locations due to accordian
@@ -67,17 +94,19 @@
 //Sets the current modal index to keep track of what the modal belongs to
 - (void) setCurrentModalIndexWithRow:(NSUInteger)row;
 
+- (void)clearSectionAndLabelData;  
+
 
 //Modal Changes
 
 //saves changes from modal
-- (void) saveChanges;
+- (void)saveChanges;
 
 //cancels changes
-- (void) cancelChanges;
+- (void)cancelChanges;
 
 //clears data (for tableview/checklist type)
-- (void) clearSelections;
+- (void)clearSelections;
 
 
 @end

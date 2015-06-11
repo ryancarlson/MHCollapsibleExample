@@ -12,5 +12,6 @@
 @interface FilterViewController : UITableViewController<MHCollapibleViewManagerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *managerArray;
+@property IBOutlet UIButton *clearButton;
 
 @end

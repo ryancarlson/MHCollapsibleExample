@@ -28,17 +28,36 @@
 
 - (NSUInteger)numOfRows;
 
+- (NSUInteger)numOfRowsSelected;
+
+- (NSUInteger)getCurrentPickedRow;
+
+- (NSString*)getCurrentText;
+
+- (BOOL)hasSelectedItems;
+
+- (NSArray*)returnSelectedArray;
+
 //Getters for results on label (data for modals)
 
 - (NSString*)returnResultKeyAtRow:(NSUInteger)row;
 
 - (BOOL)resultHasCheck:(NSUInteger)row;
 
+- (BOOL)resultsKeysExists;
+
+- (NSUInteger)containsAtLeastOneSelected;
+
+//Set label data for picker
+- (void)setCurrentPickedRowWithRow:(NSInteger)currentPickedRow;
+
+- (void)setCurrentTextWithString:(NSString *)currentText;
+
 //Toggle changes for modal data
 
 - (void)toggleCheckedValueForRow:(NSUInteger)row;
 
-//Setter for results dictionary, must be called for label types with modals
+//Setter for results array, must be called for label types with modals
 - (void)setResultsWithKeyArray:(NSArray *)resultKeys resultValues:(NSArray*)resultValues;
 
 //Call if the modal has a description
@@ -52,5 +71,9 @@
 - (void)cancelChanges;
 
 - (void)clearSelectedResults;
+
+- (void)clearMutableResults;
+
+- (void)clearAndSaveChanges;
 
 @end
