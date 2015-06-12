@@ -15,69 +15,105 @@
 
 @interface MHCollapsibleSection : NSObject <UIPickerViewDelegate,
                                             UIPickerViewDataSource,
-                                            UITextViewDelegate,
+                                            UITextFieldDelegate,
                                             UITableViewDelegate,
                                             UITableViewDataSource>
 
 //Setters
-- (instancetype) initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
+- (instancetype)initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
                      animation:(UITableViewRowAnimation)animation rowRange:(NSRange)rowRange;
 
-//Check methods
+//A singleton idenfitier for example labels, surveys, etc.
+//What entities are actually selected
+- (void)setIdentifierWithString:(NSString*)identifier;
+
+//Manager index identifies which manager this section belongs too
+//it makes it easier for the filterviewcontroller to interact
+//with the section directly than looping through its managers to find it
+- (void)setManagerIndexWithIndex:(NSUInteger)index;
+
+//Sets the current modal index to keep track of what the modal belongs to
+- (void)setCurrentModalIndexWithRow:(NSUInteger)row;
+
+#pragma Section Specifics
+
+- (NSUInteger)returnManagerIndex;
+
+- (NSUInteger)headerRowNum;
+
+- (NSUInteger)numOfRows;
+
+- (NSUInteger)itemCount;
+
+- (BOOL)returnExpanded;
+
+- (NSString*)title;
+
+- (NSString*)getIdentifier;
+
+//This is not number of selected rows total since a checklist can have multiple selected
+//For each filter, if at least one selected is found for this section
+//count will be 1. If not this will return 0.
+- (NSUInteger)countOneSelectedRowForSubtitleText;
+
+- (NSUInteger)selectedCountForSubTitleText;
+
+- (NSUInteger)getCurrentFocusForPicker;
+
+- (NSString*)getTextForTextArea;
+
+- (NSString*)getPlaceHolderText;
+
+- (NSString*)detailedHeaderSectionText;
+
+#pragma Check methods
 
 - (BOOL)checkStateOfRowWithIndexRow:(NSUInteger)row;
 
 //returns result of if row number is in range for section
 - (BOOL)rowNumInRange:(NSUInteger)num;
 
+#pragma Return Label Information
+
+- (CRUCellViewInteractionType)returnTypeWithRow:(NSUInteger)row;
+
 //returns label at a specified row, note: this is offset since the labels themselves
 //are at different spots in their array than the row numbers
 - (NSString*)returnLabelNameAtRow:(NSUInteger)row;
 
+- (NSArray*)returnCopyOfFilterData;
 
-//Getters
+- (NSString*)returnDescriptionWithRow:(NSUInteger)row;
 
-- (CRUCellViewInteractionType)returnTypeWithRow:(NSUInteger)row;
-
-- (NSUInteger)headerRowNum;
-
-- (NSUInteger)numOfRows;
-
-- (BOOL)returnExpanded;
-
-- (NSString*)title;
-
-- (NSUInteger)itemCount;
-
-//Changers
+#pragma Collapsing/Expanding pieces
 
 //reverses expanded boolean and returns result
 - (BOOL)toggleCheckAndReturnWithIndex:(NSUInteger)row;
 
 //toggles expanded bool
-- (void) toggleExpanded;
+- (void)toggleExpanded;
 
 //inserts or deletes data from rows depending on expanded
-- (void) toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
+- (void)toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
+
+#pragma Reset
 
 //resets range with new location, the sections in a hierarchy
 //affect each others locations due to accordian
 - (void)resetRangeWithNum:(NSUInteger)newLocation;
 
-//Sets the current modal index to keep track of what the modal belongs to
-- (void) setCurrentModalIndexWithRow:(NSUInteger)row;
+- (void)clearSectionAndLabelData;  
 
-
-//Modal Changes
+#pragma Modal Pieces
 
 //saves changes from modal
-- (void) saveChanges;
+- (void)saveChanges;
 
 //cancels changes
-- (void) cancelChanges;
+- (void)cancelChanges;
 
 //clears data (for tableview/checklist type)
-- (void) clearSelections;
+- (void)clearSelections;
 
 
 @end

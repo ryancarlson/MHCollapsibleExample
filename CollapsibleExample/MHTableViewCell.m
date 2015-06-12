@@ -40,7 +40,7 @@
     [super setSelected:selected animated:animated];
 }
 
-- (instancetype) initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     
     //defaults
     self.defaultAccessoryType = UITableViewCellAccessoryNone;
@@ -73,7 +73,6 @@
     self.selectionStyle = self.defaultSelectionStyle;
     
     self.checked = false;
-    self.backgroundColor = [UIColor whiteColor];
     return self;
 }
 
@@ -101,7 +100,7 @@
     }
 }
 
-- (void) changeCellStateWithToggle:(BOOL)toggle{
+- (void)changeCellStateWithToggle:(BOOL)toggle{
     
     self.checked = toggle;
     

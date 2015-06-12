@@ -14,43 +14,68 @@
 
 - (instancetype)initLabelWithName:(NSString*)name checked:(BOOL)checked interactionType:(CRUCellViewInteractionType)type;
 
-//Getters for label information
+#pragma Label Information
 
 - (BOOL)selectedCell;
 
-- (void)toggleChecked;
+- (BOOL)hasSelectedItems;
 
 - (NSString*)labelName;
 
 - (CRUCellViewInteractionType)labelType;
 
-- (NSString*)getDescription;
-
 - (NSUInteger)numOfRows;
 
-//Getters for results on label (data for modals)
+- (NSUInteger)numOfRowsSelected;
+
+- (NSUInteger)getCurrentPickedRow;
+
+- (NSString*)getCurrentText;
+
+- (NSString*)getDescription;
+
+- (NSString*)getPlaceHolderText;
+
+- (NSArray*)returnSelectedArray;
+
+- (void)toggleChecked;
+
+#pragma Label result information
 
 - (NSString*)returnResultKeyAtRow:(NSUInteger)row;
 
 - (BOOL)resultHasCheck:(NSUInteger)row;
 
-//Toggle changes for modal data
+- (BOOL)resultsKeysExists;
 
-- (void)toggleCheckedValueForRow:(NSUInteger)row;
+- (NSUInteger)containsAtLeastOneSelected;
 
-//Setter for results dictionary, must be called for label types with modals
+#pragma Setters
+//Set label data for picker
+- (void)setCurrentPickedRowWithRow:(NSInteger)currentPickedRow;
+
+- (void)setCurrentTextWithString:(NSString *)currentText;
+
+//Setter for results array, must be called for label types with modals
 - (void)setResultsWithKeyArray:(NSArray *)resultKeys resultValues:(NSArray*)resultValues;
 
-//Call if the modal has a description
-//For a tableview, this is the section title
-- (void)setLabelDescriptionWithString:(NSString *)labelDescription;
+//Call if the modal has a place holder, this is specifically used for text area but could
+//be used for other descriptive text if filterviewcontroller is subclassed
+- (void)setPlaceHolderTextWithString:(NSString *)placeHolderText;
 
-//Changers from modal changes
+//Toggle changes for modal data
+- (void)toggleCheckedValueForRow:(NSUInteger)row;
+
+#pragma Modal Changes
 
 - (void)saveResultsFromChanges;
 
 - (void)cancelChanges;
 
+- (void)clearAndSaveChanges;
+
 - (void)clearSelectedResults;
+
+- (void)clearMutableResults;
 
 @end

@@ -8,66 +8,116 @@
 
 #import "FilterViewController.h"
 
-@interface FilterViewController() 
-
-- (NSArray*)returnLabelArray;
-- (NSArray*)returnAssignedToArray;
-- (NSArray*)returnSurveyArray;
-- (NSArray*)returnSurveyAnswers;
-- (void)saveChangesForCurrentSection;
-- (void)cancelChangesForCurrentSection;
-- (void)clearChangesForCurrentSection;
-
-@property (strong, nonatomic) MHCollapsibleSection *currentSection;
-@property (nonatomic) CRUCellViewInteractionType currentModalType;
+@interface FilterViewController()
 
 @end
 
 @implementation FilterViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
-    
-    MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
-    
-    //sends double array for filternames and single array for header lines
-    [labels setDataWithFilterNames:self.returnLabelArray headerTitles:@[@"Labels"]];
-    
-    MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
-    
-    NSArray *surveyQuestions = @[self.returnSurveyArray, self.returnSurveyArray, self.returnSurveyArray];
-    NSArray *surveyList = @[@"Survey 1", @"Survey 2", @"Survey 3"];
-    [surveys setDataWithFilterNames:surveyQuestions headerTitles:surveyList];
-    surveyList = nil;
-    surveyQuestions = nil;
-    
-    MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
-    //Index 0 is title
-    [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
-    
-    //ManagerArray stores each controller or manager
-    labels.delegate = self;
-    surveys.delegate = self;
-    interactions.delegate = self;
-    self.managerArray = [NSMutableArray arrayWithObjects:labels, surveys, interactions, nil];
-    
-    surveys = nil;
-    labels = nil;
+    self.combinedFilters = [[NSMutableArray alloc] init];
+    [self setHalfModalViewLook];
+    [self createManagersAndPopulateData];
+    [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(orientationChanged:)    name:UIDeviceOrientationDidChangeNotification  object:nil];
+    //The example of this controller just has one view controller added as a sub
+    //subclasses may have other view controllers so this is a variable instead of hardcoded
+    self.currentSubViewControllerIndex = 0;
+}
 
+#pragma Set Modal and Manager Settings
+//Can be overwritten or added onto since the objects exist on the class
+//rather than in the method
+//modalOverlay is initialized and viewOverlayAlpha is set
+- (void)setHalfModalViewLook{
+    
+    self.viewOverlayAlpha = .4;
+    self.modalOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+    self.modalOverlay.alpha = 0;
+    self.modalOverlay.backgroundColor = [UIColor blackColor];
+    self.navigationController.toolbarHidden = NO;
+    self.modalCurrentlyShown = NO;
+}
+
+//Instatiate and create managers in this method while also populating the data to give to managers
+//the end result should do the following: Managers in an array, each manager has a delegate of this controller
+// Methods to call: initManagerWithAnimation, setDataFilterNames, setSubtitleTextForSectionsWithString
+- (void)createManagersAndPopulateData{
+    
+ 
+    
+}
+
+#pragma  Button Interaction for Modals
+//Save and Cancel are actually on the temporary modals
+//While the save and cancel checked here are on the filterviewcontroller itself
+- (IBAction)buttonTapped:(UIBarButtonItem*)sender{
+    
+    if([sender.title isEqualToString: @"Clear"]){
+        
+        if(self.modalCurrentlyShown){
+            //clear just shown on modal, the temp storage
+            //is cleared with this method
+            [self clearChangesForCurrentSection];
+        }
+        else{
+            
+            //This is a hard clear in a sense all labels and their results (not temp results) will get cleared
+            [self.managerArray enumerateObjectsUsingBlock:^(MHCollapsibleViewManager *manager, NSUInteger index, BOOL *stop){
+                [manager clearAllData];
+            }];
+            //reload the entire table since multiple managers
+            //could have been affected by the clear
+            [self.tableView reloadData];
+        }
+    }
+    else if ([sender.title isEqualToString: @"Save"] && !self.modalCurrentlyShown){
+        
+        //Loop through the managers and get a MHPackagedFilter for each
+        //these are concatonated. MHPackagedFilter contains key/value pairs and can have a hierarchy
+        //depending if the manager had to create multiple sections
+        [self.managerArray enumerateObjectsUsingBlock:^(MHCollapsibleViewManager *manager, NSUInteger index, BOOL *stop){
+            NSMutableArray *filter = manager.returnPackagedFilter;
+            if(filter != nil){
+                [self.combinedFilters addObjectsFromArray:filter];
+            }
+        }];
+        
+        //Now the data is stored in an array of MHPackagedFilters, with key/value pairs
+        //They can be parsed and packaged to whatever API needs to be called
+        //For a subclass, just call super on this class and then handle the combinedFilters array accordingly
+        
+    }
+    else if([sender.title isEqualToString:@"Cancel"] && !self.modalCurrentlyShown){
+        
+        //dismiss modal, nothing needs to be sent to the search view controller or wherever the filter gets sent
+        self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 #pragma Manager Delegate
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection *)section row:(NSUInteger)row{
+//Handles creation of modal or pretend half modal that shows the type of uiview applicable
+- (void)createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection *)section rowPath:(NSIndexPath *)rowPath{
     
     self.currentSection = section;
     self.currentModalType = cellType;
+    self.currentRowPath = rowPath;
+    self.modalCurrentlyShown = YES;
+    
+    //so the modal will take up the entire screen properly
+    [self.tableView setBounces:NO];
+    self.tableView.scrollEnabled = NO;
     
     //Not all will need these buttons but most will have them in common
     UIBarButtonItem *save = [[UIBarButtonItem alloc] initWithTitle:@"Save"
                                                             style:UIBarButtonItemStylePlain target:self action:@selector(saveChangesForCurrentSection)];
     UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                style:UIBarButtonItemStylePlain target:self action:@selector(cancelChangesForCurrentSection)];
-    UIBarButtonItem *clear =[[UIBarButtonItem alloc] initWithTitle:@"Clear" style:UIBarButtonItemStylePlain target:self action:@selector(clearChangesForCurrentSection)];
+    
+    UIBarButtonItem *clear = [[UIBarButtonItem alloc] initWithTitle:@"Clear"
+                                                               style:UIBarButtonItemStylePlain target:self action:@selector(clearChangesForCurrentSection)];
     
     switch (cellType) {
             
@@ -81,13 +131,11 @@
             tableViewController.tableView.dataSource = section;
             
             //tableviewcontroller has save, cancel and clear buttons
-            tableViewController.navigationItem.title = [section returnLabelNameAtRow:row];
-            tableViewController.navigationItem.rightBarButtonItem = save;
-            tableViewController.navigationItem.leftBarButtonItem = cancel;
-            [tableViewController setToolbarItems:@[clear]];
+            [self setButtonsAndColorWithController:(UIViewController*)tableViewController bgColor:nil cancel:cancel save:save clear:clear];
 
             //navigation controller for handling the back/forth of the modal
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:tableViewController];
+            //do not call setSettingsforNav since this won't be a half view
             navigationController.toolbarHidden = NO;
             [self presentViewController:navigationController animated:YES completion:nil];
             
@@ -95,28 +143,49 @@
             tableViewController = nil;
             
         }
-        break;
+            break;
+            
         case CRUCellViewInteractionPicker:{
             
             UIPickerView *picker = [[UIPickerView alloc] init];
+            picker.backgroundColor = [UIColor whiteColor];
             picker.delegate = section;
             picker.dataSource = section;
             
             UIViewController *pickerViewController = [[UIViewController alloc] init];
-            pickerViewController.view.backgroundColor = [UIColor whiteColor];
-            pickerViewController.navigationItem.title = [section returnLabelNameAtRow:row];
-            pickerViewController.navigationItem.rightBarButtonItem = save;
-            pickerViewController.navigationItem.leftBarButtonItem = cancel;
+            [self setButtonsAndColorWithController:pickerViewController bgColor:[UIColor whiteColor] cancel:cancel save:save clear:nil];
+            //[pickerViewController.view addSubview:labelText];
             [pickerViewController.view addSubview:picker];
+  
             
-            //navigation controller for handling the back/forth of the modal
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pickerViewController];
-            [self presentViewController:navigationController animated:YES completion:nil];
-            
+            [self setSettingsForNavWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+            [self bringUpHalfModalWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+            //keep the previously selected row in context so the user can see what they put before
+            [picker selectRow:section.getCurrentFocusForPicker inComponent:0 animated:YES];
+
             navigationController = nil;
             pickerViewController = nil;
+        }
+            break;
             
+        case CRUCellViewInteractionTextBox:{
             
+            UILabel *descriptionText = [self createLabelWithSection:section rowPath:rowPath cgSize:self.view.frame.size];
+            UITextField *textField = [self createTextFieldWithSection:section cgSize:self.view.frame.size];
+            
+            UIViewController *textAreaController = [[UIViewController alloc] init];
+            [self setButtonsAndColorWithController:textAreaController bgColor:[UIColor whiteColor] cancel:cancel save:save clear:nil];
+            
+            [textAreaController.view addSubview:descriptionText];
+            [textAreaController.view addSubview:textField];
+            
+            UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:textAreaController];
+            [self setSettingsForNavWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+            [self bringUpHalfModalWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+            
+            navigationController = nil;
+            textAreaController = nil;
         }
             
         default:
@@ -125,92 +194,297 @@
     
 }
 
-- (void)saveChangesForCurrentSection{
-
-    [self.currentSection saveChanges];
-
-    self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self dismissViewControllerAnimated:YES completion:nil];
+//Used by each modal type to set buttons and the default color
+//Not all of them will need each of them set, hence the check for nil on each
+- (void)setButtonsAndColorWithController:(UIViewController*)viewController bgColor:(UIColor*)bgColor
+                                  cancel:(UIBarButtonItem*)cancel save:(UIBarButtonItem*)save clear:(UIBarButtonItem*)clear{
+    
+    if(save != nil){
+        viewController.navigationItem.rightBarButtonItem = save;
+    }
+    if(cancel != nil){
+        viewController.navigationItem.leftBarButtonItem = cancel;
+    }
+    if(clear != nil){
+        [viewController setToolbarItems:@[clear]];
+    }
+    if(bgColor != nil){
+        viewController.view.backgroundColor = bgColor;
+    }
 }
 
+
+//Set for half modal types
+- (void)setSettingsForNavWithController:(UINavigationController*)navigationController cgSize:(CGSize)size offSet:(CGPoint)offset{
+    
+    NSUInteger height = size.height;
+    NSUInteger width = size.width;
+    
+    navigationController.toolbarHidden = YES;
+    navigationController.view.frame = CGRectMake(0, offset.y+height, width, height/2);
+}
+
+//Creates a UILabel for the actual label selected since the modal could cover up that selection
+//and the user doesn't have to remember which one they selected this way
+- (UILabel*)createLabelWithSection:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath cgSize:(CGSize)size{
+    
+    NSUInteger height = size.height;
+    NSUInteger width = size.width;
+    
+    UILabel *descriptionText = [[UILabel alloc] initWithFrame:CGRectMake(width/10, height/8, width-width/5, height/20)];
+    descriptionText.text = [section returnLabelNameAtRow:rowPath.row];
+    descriptionText.textColor = [UIColor blackColor];
+    descriptionText.numberOfLines = 0;
+    descriptionText.lineBreakMode = NSLineBreakByWordWrapping;
+    
+    return descriptionText;
+}
+
+//Creates a textfield for the user to enter their filter label
+- (UITextField*)createTextFieldWithSection:(MHCollapsibleSection*)section cgSize:(CGSize)size{
+    
+    NSUInteger height = size.height;
+    NSUInteger width = size.width;
+    
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(width/10, height/6, width - width/5, height/20)];
+    NSString *previousText = section.getTextForTextArea;
+    
+    if([previousText isEqualToString:@""] || previousText == nil){
+        textField.placeholder = section.getPlaceHolderText;
+    }
+    else{
+        textField.text = previousText;
+    }
+    
+    textField.borderStyle = UITextBorderStyleLine;
+    textField.delegate = section;
+    textField.returnKeyType = UIReturnKeyDone;
+    textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    textField.keyboardType = UIKeyboardAppearanceDefault;
+    //important to give responder
+    [textField canBecomeFirstResponder];
+    return textField;
+}
+
+//Handles animation and sub controller to add a sub controller onto this modal
+//Creates a "Half-like" modal on the screen with the overlay
+- (void)bringUpHalfModalWithController:(UINavigationController*)navigationController cgSize:(CGSize)size offSet:(CGPoint)offset{
+    
+    NSUInteger height = size.height;
+    NSUInteger width = size.width;
+    
+    self.modalOverlay.alpha = 0;
+    
+    NSUInteger extendedHeight = height;
+    NSUInteger yCoordinate = offset.y;
+    
+    self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, extendedHeight);
+
+    [self.view addSubview:self.modalOverlay];
+    [self addChildViewController:navigationController];
+    [self.view addSubview:navigationController.view];
+    [UIView animateWithDuration:.2 delay: 0.0 options: UIViewAnimationOptionCurveLinear animations:^{
+        navigationController.view.frame = CGRectMake(0, yCoordinate+height/2, width, height/2);
+        self.modalOverlay.alpha = self.viewOverlayAlpha;
+    }completion:^(BOOL finished){
+    }];
+    [navigationController didMoveToParentViewController:self];
+}
+
+//Removes the "half modal"
+- (void)removeHalfModalWithController:(UINavigationController*)navigationController cgSize:(CGSize)size offSet:(CGPoint)offset{
+    
+    NSUInteger height = size.height;
+    NSUInteger width = size.width;
+    
+    [UIView animateWithDuration:.2 delay: 0.0 options: UIViewAnimationOptionCurveLinear animations:^{
+        navigationController.view.frame = CGRectMake(offset.x, offset.y+height, width, height/2);
+        self.modalOverlay.alpha = 0;
+    }completion:^(BOOL finished){
+        [self.modalOverlay removeFromSuperview];
+        [navigationController willMoveToParentViewController:nil];
+        [navigationController.view removeFromSuperview];
+        [navigationController removeFromParentViewController];
+    }];
+}
+
+//Saves the changes made by the user and handles refreshing
+//so the user can see the results on the filter label of what they selected
+- (void)saveChangesForCurrentSection{
+    
+    [self.tableView setBounces:YES];
+    self.tableView.scrollEnabled = YES;
+    
+    if(self.currentModalType == CRUCellViewInteractionTextBox){
+        
+        [self resignFirstResponderWithClearOption:NO];
+    }
+    
+    [self.currentSection saveChanges];
+    
+    //since checklist type uses real modal
+    if(self.currentModalType != CRUCellViewInteractionCheckList){
+    
+        //currentSubViewControllerIndex is set as 0 by default in viewDidLoad
+        UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
+        [self removeHalfModalWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+     
+    }
+    else{
+        self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    
+    self.modalCurrentlyShown = NO;
+    //Reload the modal row to show results
+    [self.tableView reloadRowsAtIndexPaths:@[self.currentRowPath] withRowAnimation:UITableViewRowAnimationNone];
+    //Reload the header row of that modal so it's counter for # of selected items changes
+    NSIndexPath *rootPath = [NSIndexPath indexPathForRow:self.currentSection.headerRowNum inSection:self.currentSection.returnManagerIndex];
+    [self.tableView reloadRowsAtIndexPaths:@[rootPath] withRowAnimation:UITableViewRowAnimationNone];
+    //manager header row num is always 0, reload this just in case it's a newly selected item for # change text
+    rootPath = [NSIndexPath indexPathForRow:0 inSection:self.currentSection.returnManagerIndex];
+    [self.tableView reloadRowsAtIndexPaths:@[rootPath] withRowAnimation:UITableViewRowAnimationNone];
+    rootPath = nil;
+}
+
+//Dismisses the half modal or full modal
+//Resets the temp data stored in the label so that the changes are not kept
 - (void)cancelChangesForCurrentSection{
+    
+    [self.tableView setBounces:YES];
+    self.tableView.scrollEnabled = YES;
+    
+    if(self.currentModalType == CRUCellViewInteractionTextBox){
+        
+        [self resignFirstResponderWithClearOption:NO];
+    }
     
     [self.currentSection cancelChanges];
     
-    self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self dismissViewControllerAnimated:YES completion:nil];
+    //since checklist type is a true modal
+    if(self.currentModalType != CRUCellViewInteractionCheckList){
+    
+        //currentSubViewControllerIndex is set as 0 by default in viewDidLoad
+        UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
+        [self removeHalfModalWithController:navigationController cgSize:self.view.frame.size offSet:self.tableView.contentOffset];
+
+    }
+    else{
+        
+        self.presentedViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    self.modalCurrentlyShown = NO;
 }
 
+//Clears the temp data so that a clear isn't saved, the user will need to hit save
+//after clearing to make the clear permanent
 - (void)clearChangesForCurrentSection{
     
     [self.currentSection clearSelections];
     
-    UINavigationController *navigationController = (UINavigationController*)self.presentedViewController;
-    if([navigationController.topViewController isKindOfClass:[UITableViewController class]]){
+    if(self.currentModalType == CRUCellViewInteractionCheckList){
         
+        UINavigationController *navigationController = (UINavigationController*)self.presentedViewController;
         UITableViewController *tableViewController = (UITableViewController*)navigationController.topViewController;
         //since the checkmarks have been cleared, reload the table to show the clear affect
         [tableViewController.tableView reloadData];
         tableViewController = nil;
         navigationController = nil;
     }
-    
-}
-- (NSArray*)returnSurveyAnswers{
-    return @[@"Answer 1", @"Answer 2", @"Answer 3", @"Answer 4", @"Answer 5"];
-}
-
-//simply populates data since it's more complicated now
-- (NSArray*)returnLabelArray{
-    
-    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Freshman" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sophomore" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Junior" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Senior" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
-    return filterData;
-}
-
-- (NSArray*)returnSurveyArray{
-    
-    MHFilterLabel *checkListLabel = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 1" checked:false interactionType:CRUCellViewInteractionCheckList];
-    
-    //optional description, show as section title on modal
-    [checkListLabel setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
-    
-    MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 2" checked:false interactionType:CRUCellViewInteractionPicker];
-    
-    //optional description, show as section title on modal
-    [checkListLabel2 setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel2 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
-    
-    MHFilterLabel *checkListLabel3 = [[MHFilterLabel alloc] initLabelWithName:@"Survey Question 3" checked:false interactionType:CRUCellViewInteractionCheckList];
-    
-    //optional description, show as section title on modal
-    [checkListLabel3 setLabelDescriptionWithString:@"Select survey answers"];
-    [checkListLabel3 setResultsWithKeyArray:self.returnSurveyAnswers resultValues:@[@NO, @NO, @NO, @NO, @NO]];
-    
-    NSArray* filterData = @[checkListLabel,checkListLabel2, checkListLabel3];
-    
-    checkListLabel = nil;
-    checkListLabel2 = nil;
-    checkListLabel3 = nil;
-    
-    return filterData;
-}
-- (NSArray*)returnAssignedToArray{
-    
-    NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Jan" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Sue" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Andy" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Peggy" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
-    return filterData;
+    else if(self.currentModalType == CRUCellViewInteractionPicker){
+        
+        //currentSubViewControllerIndex set as 0 by default in viewdidload
+        UINavigationController *navigationController = (UINavigationController*)self.childViewControllers[self.currentSubViewControllerIndex];
+        UIViewController *pickerViewController = navigationController.topViewController;
+        
+        [pickerViewController.view.subviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL *stop){
+            
+            if([view isKindOfClass:[UIPickerView class]]){
+                
+                UIPickerView *pickView = (UIPickerView*)view;
+                [pickView selectRow:self.currentSection.getCurrentFocusForPicker inComponent:0 animated:YES];
+            }
+        }];
+    }
+    else if(self.currentModalType == CRUCellViewInteractionTextBox){
+        
+        [self resignFirstResponderWithClearOption:YES];
+    }
+    self.modalCurrentlyShown = NO;
 }
 
-- (NSArray*)returnInteractionsArray{
+//Resigns the keyboard so the save/cancel buttons can take control after
+- (void)resignFirstResponderWithClearOption:(BOOL)clear{
     
-    NSArray* filterData = [[NSArray alloc] initWithObjects: [[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism Decisions" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Holy Spirit Presentation" checked:false interactionType:CRUCellViewInteractionCheckToggle], nil];
-    return filterData;
+    //currentSubViewControllerIndex set 0 default in viewdidload
+    UINavigationController *navigationController = (UINavigationController*)self.childViewControllers[self.currentSubViewControllerIndex];
+    UIViewController *textFieldViewController = navigationController.topViewController;
+    
+    [textFieldViewController.view.subviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL *stop){
+        
+        if([view isKindOfClass:[UITextField class]]){
+            
+            UITextField *textField = (UITextField*)view;
+            
+            if(clear){
+                textField.text = @"";
+            }
+            [textField resignFirstResponder];
+        }
+    }];
+    
 }
+
+- (void)orientationChanged:(NSNotification *)notification{
+    
+    if(self.modalCurrentlyShown && self.currentModalType != CRUCellViewInteractionCheckList){
+        
+        UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+        NSUInteger width = self.view.frame.size.width;
+        NSUInteger height = self.view.frame.size.height;
+        CGPoint offset = self.tableView.contentOffset;
+        UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
+        switch (orientation)
+        {
+            case UIDeviceOrientationPortrait:
+                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
+                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI)];
+                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(0)];
+                 self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+                break;
+            case UIDeviceOrientationPortraitUpsideDown:
+                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(-M_PI)];
+                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
+                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(-M_PI)];
+                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+            case UIDeviceOrientationLandscapeLeft:
+                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
+                //[navigationController.view setTransform:CGAffineTransformMakeRotation(-M_PI)];
+                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+            case UIDeviceOrientationLandscapeRight:
+                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(-M_PI_2)];
+                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
+                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI)];
+                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(-M_PI_2)];
+                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+            default:
+                break;
+        }
+     
+    }
+}
+
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }
+
+#pragma TableView Delegate
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -218,6 +492,7 @@
     MHCollapsibleViewManager *manager = [self.managerArray objectAtIndex:section];
     //There will at least be one because of the header
     NSUInteger numOfRows = (NSInteger) manager.numOfRows;
+    manager = nil;
     return numOfRows;
 }
 
@@ -227,21 +502,24 @@
    return [self.managerArray count];
 }
 
--(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+//If the filterview is subclassed, the MHTableViewCell can be returned instead
+//and the defaults set for the look of the cell can be overwritten by the controller
+//They will still be set by the manager as default but customization is still possible
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //temp manager to get create and return cell
     MHCollapsibleViewManager *manager = [self.managerArray objectAtIndex:indexPath.section];
-    
+    //returnCellWithIndex handles the look of a header cell, modal cell (> indicator) and checktoggle
+    //to customize look, a subclassed controller could get the MHTableViewCell instead of casting it
+    //and then modify the defaults from there with setDefaults and setClicked
     UITableViewCell * cell = (UITableViewCell*)[manager returnCellWithIndex:indexPath tableView:tableView];
-    
+    manager = nil;
     return cell;
-    
-   
 }
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     MHCollapsibleViewManager *manager = [self.managerArray objectAtIndex:indexPath.section];
-   
     //manager handles look and keeping track if whatever cell has been selected
     [manager selectedRowAtIndexPath:tableView indexPath:indexPath];
     

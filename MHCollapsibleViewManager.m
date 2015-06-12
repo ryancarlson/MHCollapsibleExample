@@ -8,16 +8,10 @@
 
 #import "MHCollapsibleViewManager.h"
 
-@implementation MHCollapsibleViewManagerDeletegate
-
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row{
-    //do stuff
-}
-@end
-
 @interface MHCollapsibleViewManager()
 
 @property (strong, nonatomic) NSString *headerTitle;
+@property (strong, nonatomic) NSString *subtitleCountText;
 @property (strong, nonatomic) NSMutableArray *filterSections;
 @property (nonatomic) UITableViewRowAnimation rowAnimation;
 //hierarchy determines if Manager will be collapsible itself
@@ -28,14 +22,20 @@
 //expanded = false means children rows are not shown
 @property (nonatomic) BOOL expanded;
 
-
-- (void) toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
-
-- (NSUInteger)numOfSections;
+- (void)toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
+//internal to the manager, it shows "# of selected __" if sections made
+//or # of items if no selections made
+- (NSString*)returnDetailText;
+//This is based on a count of 1 per section if the section has at least 1 selected
+//it does not total up since one section could have a label with results > 1
+//internal method since it's just shown on the table the detailText
+- (NSUInteger)numOfSelectedRowsForText;
 
 @end
 
 @implementation MHCollapsibleViewManager
+
+#pragma Initalizing
 
 -(instancetype)init{
     self = [super init];
@@ -63,37 +63,10 @@
     return self;
 }
 
-//Return methods
-- (NSString*)title{
-    return self.headerTitle;
-}
-
-- (NSUInteger)numOfSections{
-    NSUInteger rowCount = 0;
-    if(self.expanded){
-        rowCount = self.filterSections.count;
-    }
-    return rowCount;
-}
-
-- (NSUInteger)numOfRows{
-    
-    __block NSUInteger rowCount = 0;
-    if(self.hierarchy){
-        rowCount++;
-    }
-    if(self.expanded || !self.hierarchy){
-        [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection* section, NSUInteger index, BOOL *stop){
-            rowCount += section.numOfRows;
-        }];
-    }
-
-    return rowCount;
-}
-
+#pragma Initial Settings
 //called after Initializing Manager
 //can take double array or single array depending if hierarchy
-- (void) setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles {
+- (void)setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles {
     
     __block NSUInteger start = 0;
     //used in loop to populate section array
@@ -117,7 +90,7 @@
         range = NSMakeRange(start, filterCount);
         section = [section initWithArray:filterNames headerTitle:sectionTitle animation:self.rowAnimation rowRange:range];
         [self.filterSections addObject:section];
- 
+        
     }
     else{
         //filterNames should have multiple arrays if it was a hierarchy
@@ -127,7 +100,7 @@
             start += 1;
             self.expanded = false;
         }
-    
+        
         if(headerTitles.count == filterCount){
             [filterNames enumerateObjectsUsingBlock:^(NSArray *filters, NSUInteger index, BOOL *stop){
                 filterCount = filters.count+1;//offset for header
@@ -142,6 +115,74 @@
     section = nil;
 }
 
+//overrides the "items" text for sections with a specific string
+- (void)setTextIdentifierAndIndexWithString:(NSString *)identifier rootText:(NSString *)rootText managerIndex:(NSUInteger)managerIndex{
+    
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        
+        [section setIdentifierWithString:identifier];
+        [section setManagerIndexWithIndex:managerIndex];
+    }];
+    
+    self.subtitleCountText = rootText;
+}
+
+
+#pragma Get Information on the Manager
+
+- (NSString*)title{
+    
+    return self.headerTitle;
+}
+
+//numOfSections changes based on if manager is expanded
+- (NSUInteger)numOfSections{
+    
+    NSUInteger rowCount = 0;
+    if(self.expanded){
+        rowCount = self.filterSections.count;
+    }
+    return rowCount;
+}
+
+//numOfRows changes based on if the manager is expanded
+//and if it is a hierarchy
+- (NSUInteger)numOfRows{
+    
+    __block NSUInteger rowCount = 0;
+    if(self.hierarchy){
+        rowCount++;
+    }
+    if(self.expanded || !self.hierarchy){
+        [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection* section, NSUInteger index, BOOL *stop){
+            rowCount += section.numOfRows;
+        }];
+    }
+
+    return rowCount;
+}
+
+- (void)clearAllData{
+    
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        [section clearSectionAndLabelData];
+    }];
+}
+
+-(NSUInteger)numOfSelectedRowsForText{
+    
+    __block NSUInteger count = 0;
+    
+    //The sub title text should match just one per selection (if there is one selected record)
+    //even if the checklist has lots of values checked the number just needs to represent that one section has one selected
+    //Ex: 3 surveys selected (though one survey question could have multiple questions selected)
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        
+        count += section.countOneSelectedRowForSubtitleText;
+    }];
+    
+    return count;
+}
 
 //creates and returns a default accessorized cell to be modified
 - (MHTableViewCell*)createCellWithtableView:(UITableView*)tableView interactionType:(CRUCellViewInteractionType)type checked:(BOOL)checked{
@@ -153,13 +194,17 @@
         cellIdentifier = @"Header";
     }
     else if(type != CRUCellViewInteractionCheckToggle){
+        //Indicator is checked in MHCell's version of initWithStyle
+        //it determines the look of the cell by default
         cellIdentifier = @"Indicator";
     }
     if(!cell){
-        cell = [[MHTableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        cell = [[MHTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
     [cell setCellViewInteractionWithType:type];
     switch (type) {
+        case CRUCellViewInteractionTextBox:
+        case CRUCellViewInteractionPicker:
         case CRUCellViewInteractionCheckList:{
             [cell changeCellStateWithToggle:checked];
         }
@@ -197,6 +242,39 @@
     return cell;
 }
 
+- (NSString*)returnDetailText{
+    
+    NSUInteger count = self.numOfSelectedRowsForText;
+    NSString *detailedText;
+    NSString *itemTitle = self.subtitleCountText;
+    NSString *plural = @"";
+    NSString *selected = @"selected";
+    
+    if(itemTitle == nil){
+        itemTitle = @"item";
+    }
+    
+    if(count < 1){
+        selected = @"";
+        itemTitle = @"item";
+        count = [self.filterSections count];
+        if(count > 1){
+            plural = @"s";
+        }
+    }
+    else{
+        if(count > 1){
+            plural = @"s";
+        }
+    }
+    detailedText = [NSString stringWithFormat:NSLocalizedString(@"%i %@ %@%@",), count, selected, itemTitle, plural];
+    
+    itemTitle = nil;
+    plural = nil;
+    selected = nil;
+    return detailedText;
+}
+
 //creates a cell and returns what it should look like depending on if the header has been clicked
 //or if normal cell has been clicked
 -(MHTableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView{
@@ -212,7 +290,7 @@
         type = CRUCellViewInteractionHeader;
         collapsed = self.expanded;
         cellText = self.headerTitle;
-        detailText = [NSString stringWithFormat:NSLocalizedString(@"%i items",), self.filterSections.count];
+        detailText = self.returnDetailText;
     }
     else{
         
@@ -222,13 +300,14 @@
                 type = CRUCellViewInteractionHeader;
                 cellText = section.title;
                 collapsed = section.returnExpanded;
-                detailText = [NSString stringWithFormat:NSLocalizedString(@"%i items",), section.itemCount];
+                detailText = section.detailedHeaderSectionText;
                 *stop = YES;//kick out since we found the row
             }
             else if(section.returnExpanded && [section rowNumInRange:indexRow]){
                 type = [section returnTypeWithRow:indexRow];
                 cellText = [section returnLabelNameAtRow:indexRow];
                 collapsed = [section checkStateOfRowWithIndexRow:indexRow];
+                detailText = [section returnDescriptionWithRow:indexRow];
                 *stop = YES;//kick out since we found the row
             }
         }];
@@ -240,7 +319,7 @@
     return cell;
 }
 
-- (void) selectedRowAtIndexPath: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
+- (void)selectedRowAtIndexPath:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
     
     __block MHTableViewCell *cell = (MHTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     __block CRUCellViewInteractionType type = cell.cellViewInteractionType;
@@ -255,9 +334,8 @@
     else{
         
         switch (type) {
-            case CRUCellViewInteractionPicker:{
-                
-            }
+            //modal types
+            case CRUCellViewInteractionPicker:
             case CRUCellViewInteractionCheckList:
             case CRUCellViewInteractionTextBox:
             {
@@ -270,7 +348,7 @@
                         [section setCurrentModalIndexWithRow:indexRow];
                         //call delegate to create modal for checklist
                         //section should delegate views/data on modal
-                        [self.delegate createModalWithType:type section:section row:indexRow];
+                        [self.delegate createModalWithType:type section:section rowPath:indexPath];
                         *stop = YES;//kick out since we found the row
                     }
                 }];
@@ -311,7 +389,7 @@
 //Before the section even expands or collapses, the other sections are notified so their ranges will
 //match. This is because the tableview can trigger the cells offscreen to reppear and so the other sections
 //need to know before the one that actually collapses
-- (void) updateOtherSectionLocationsWithSection:(MHCollapsibleSection*)changedSection index:(NSUInteger)sectionSpot{
+- (void)updateOtherSectionLocationsWithSection:(MHCollapsibleSection*)changedSection index:(NSUInteger)sectionSpot{
     
     __block NSUInteger newLocation = 0;
     __block NSUInteger previousNumOfRows = 1;
@@ -327,7 +405,7 @@
 
 
 //toogles the children rows
-- (void) toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
+- (void)toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
     
     __block NSIndexPath *tempPath = nil;
     //Get the section for creating array of indexpaths
@@ -361,9 +439,63 @@
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     pathArray = nil;
+}
+
+//Returns a mutable array of packaged filters for each filter label
+//MHPackaged Filter is made up of key value pairs with a root key value pair
+//if it's a hierarchy. The root shows what type the children expansions are
+//for example surveys and survey questions. Each question name ex: "What is your phone number?"
+//will have a value. Key value pair: Question, Answer and yes there can be exactly the same
+//for the key value pair, so the same key can exist but with different values
+- (NSMutableArray*)returnPackagedFilter{
     
+    __block NSString *filterTag = @"";
+    __block NSString *resultValue = @"";
+    __block NSMutableArray *filterArray = [[NSMutableArray alloc] init];
+    __block NSArray *sectionDataArray = [[NSArray alloc] init];
+    __block NSArray *labelDataArray = [[NSArray alloc] init];
+    __block MHPackagedFilter *filter;
+    
+
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        
+        if(section.selectedCountForSubTitleText > 0){
+            
+            if(self.hierarchy){
+                
+                filterTag = self.subtitleCountText;
+                filter = [[MHPackagedFilter alloc] initWithRootKey:filterTag rootValue:section.getIdentifier hierarchy:YES];
+            }
+            else{
+                
+                filterTag = section.getIdentifier;
+            }
+            
+            filter = [[MHPackagedFilter alloc] initWithRootKey:filterTag rootValue:section.getIdentifier hierarchy:NO];
+            sectionDataArray = section.returnCopyOfFilterData;
+            [sectionDataArray enumerateObjectsUsingBlock:^(MHFilterLabel *label, NSUInteger index, BOOL *stop){
+                if(self.hierarchy){
+                    if(label.hasSelectedItems){
+                        labelDataArray = label.returnSelectedArray;
+                        [labelDataArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger index, BOOL *stop){
+                            [filter addFilterWithKey:label.labelName value:key];
+                        }];
+                    }
+                }
+                else{
+                    if(label.selectedCell){
+                        resultValue = label.labelName;
+                        [filter addFilterWithKey:filterTag value:resultValue];
+                    }
+                }
+            }];
+            [filterArray addObject:filter];
+        }
+        
+    }];
+    
+    return filterArray;
 }
 
 

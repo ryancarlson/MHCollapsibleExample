@@ -16,12 +16,15 @@
 #import "MHFilterLabel.h"
 #import "MHTableViewCell.h"
 #import "MHCollapsibleSection.h"
+#import "MHPackagedFilter.h"
+
+#pragma Delgate Methods
 
 @protocol MHCollapibleViewManagerDelegate <NSObject>
 
 @required
 
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath;
 
 @end
 
@@ -31,11 +34,10 @@
 }
 
 
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section row:(NSUInteger)row;
+- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath;
 
 @end
 
-//Super delegate
 @interface MHCollapsibleViewManager : NSObject
 
 @property (nonatomic, strong) id delegate;
@@ -54,22 +56,33 @@
 //Set the data for the manager
 //This should be a mutable array of strings that the Manager then creates MHFilterLabel objects for
 //Can be used to override a manager's array of data
-- (void) setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles;
+- (void)setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles;
+
+//Identifier is a singleton of what are the sections, ex: label, question
+//while rootText gives the root such as survey
+- (void)setTextIdentifierAndIndexWithString:(NSString*)identifier rootText:(NSString*)rootText managerIndex:(NSUInteger)managerIndex;
 
 //RETURN METHODS
 
-- (UITableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView;
+- (MHTableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView;
 
-//Returns all selected rows
-//- (NSMutableArray*)returnSelectedRows;
+- (void)selectedRowAtIndexPath:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
 
-- (void) selectedRowAtIndexPath: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
-
-- (NSUInteger)numOfRows;
-
-- (NSUInteger)numOfSections;
+//Returns an array of filters for this manager in key value pairs
+//these can be parsed to pass onto api calls or apply with predicate for search
+- (NSMutableArray*)returnPackagedFilter;
 
 - (NSString*)title;
+
+//changes based on if manager expanded
+//and if manager is hierarchy, it's included in the number
+- (NSUInteger)numOfRows;
+
+//changes based on if manager expanded
+- (NSUInteger)numOfSections;
+
+//clears and "saves" (not as filter but not in temp results)
+- (void)clearAllData;
 
 
 

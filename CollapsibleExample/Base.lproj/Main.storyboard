@@ -84,9 +84,24 @@
                             <outlet property="delegate" destination="p1N-pv-U4j" id="c5w-tS-hx3"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Clear" id="dHR-6S-gM8">
+                            <connections>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="g62-HU-X0D"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="Filter" id="qTJ-qa-udj">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="JuX-r5-ZVm"/>
-                        <barButtonItem key="rightBarButtonItem" title="Save" id="Kxk-7q-j38"/>
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="JuX-r5-ZVm">
+                            <connections>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="ADU-wJ-JmI"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" tag="1" title="Save" id="Kxk-7q-j38">
+                            <connections>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="VcS-RB-Jdd"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ce3-Vr-vmH" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -96,11 +111,14 @@
         <!--Navigation Controller-->
         <scene sceneID="zta-3E-fnj">
             <objects>
-                <navigationController id="TX6-rm-Vg4" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="TX6-rm-Vg4" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="YZe-q2-Htl">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="JoC-lH-IXG">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="p1N-pv-U4j" kind="relationship" relationship="rootViewController" id="cGq-Ug-ktx"/>
                     </connections>
