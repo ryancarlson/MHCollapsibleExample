@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MHKeyValuePair : NSObject
+//Simple class that has a key and a value (both NSStrings)
 
+@interface MHKeyValuePair : NSObject
 
 - (instancetype)initWithKey:(NSString*)givenKey value:(NSString*)givenValue;
 
@@ -20,6 +21,5 @@
 - (NSString*)returnKey;
 
 - (NSString*)returnValue;
-
 
 @end

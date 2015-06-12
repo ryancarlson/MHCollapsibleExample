@@ -73,7 +73,6 @@
     self.selectionStyle = self.defaultSelectionStyle;
     
     self.checked = false;
-    self.backgroundColor = [UIColor whiteColor];
     return self;
 }
 

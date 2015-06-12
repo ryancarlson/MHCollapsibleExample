@@ -8,13 +8,6 @@
 
 #import "MHCollapsibleViewManager.h"
 
-@implementation MHCollapsibleViewManagerDeletegate
-
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath{
-    //do stuff
-}
-@end
-
 @interface MHCollapsibleViewManager()
 
 @property (strong, nonatomic) NSString *headerTitle;
@@ -29,18 +22,20 @@
 //expanded = false means children rows are not shown
 @property (nonatomic) BOOL expanded;
 
-
-- (void) toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
-
+- (void)toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
+//internal to the manager, it shows "# of selected __" if sections made
+//or # of items if no selections made
 - (NSString*)returnDetailText;
-
--(NSUInteger)numOfSelectedRowsForText;
-
-- (NSUInteger)numOfSections;
+//This is based on a count of 1 per section if the section has at least 1 selected
+//it does not total up since one section could have a label with results > 1
+//internal method since it's just shown on the table the detailText
+- (NSUInteger)numOfSelectedRowsForText;
 
 @end
 
 @implementation MHCollapsibleViewManager
+
+#pragma Initalizing
 
 -(instancetype)init{
     self = [super init];
@@ -68,54 +63,7 @@
     return self;
 }
 
-//Return methods
-- (NSString*)title{
-    return self.headerTitle;
-}
-
-- (NSUInteger)numOfSections{
-    NSUInteger rowCount = 0;
-    if(self.expanded){
-        rowCount = self.filterSections.count;
-    }
-    return rowCount;
-}
-
-- (BOOL)sectionExistsInManager:(MHCollapsibleSection*)comparisonSection{
-    
-    __block BOOL sectionExists = NO;
-    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
-        if(comparisonSection.headerRowNum == section.headerRowNum){
-            sectionExists = YES;
-            *stop = YES;
-        }
-     }];
-    return sectionExists;
-}
-
-- (NSUInteger)numOfRows{
-    
-    __block NSUInteger rowCount = 0;
-    if(self.hierarchy){
-        rowCount++;
-    }
-    if(self.expanded || !self.hierarchy){
-        [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection* section, NSUInteger index, BOOL *stop){
-            rowCount += section.numOfRows;
-        }];
-    }
-
-    return rowCount;
-}
-
-- (void)clearAllData{
-    
-    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
-        [section clearSectionAndLabelData];
-    }];
-}
-
-
+#pragma Initial Settings
 //called after Initializing Manager
 //can take double array or single array depending if hierarchy
 - (void)setDataWithFilterNames:(NSArray*)filterNames headerTitles:(NSArray*)headerTitles {
@@ -142,7 +90,7 @@
         range = NSMakeRange(start, filterCount);
         section = [section initWithArray:filterNames headerTitle:sectionTitle animation:self.rowAnimation rowRange:range];
         [self.filterSections addObject:section];
- 
+        
     }
     else{
         //filterNames should have multiple arrays if it was a hierarchy
@@ -152,7 +100,7 @@
             start += 1;
             self.expanded = false;
         }
-    
+        
         if(headerTitles.count == filterCount){
             [filterNames enumerateObjectsUsingBlock:^(NSArray *filters, NSUInteger index, BOOL *stop){
                 filterCount = filters.count+1;//offset for header
@@ -168,17 +116,73 @@
 }
 
 //overrides the "items" text for sections with a specific string
-- (void)setSubtitleTextForSectionsWithString:(NSString*)subtitle rootText:(NSString*)rootText managerIndex:(NSUInteger)managerIndex{
+- (void)setTextIdentifierAndIndexWithString:(NSString *)identifier rootText:(NSString *)rootText managerIndex:(NSUInteger)managerIndex{
     
     [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
         
-        [section setSubtitleItemTextForSectionWithString:subtitle];
+        [section setIdentifierWithString:identifier];
         [section setManagerIndexWithIndex:managerIndex];
     }];
     
     self.subtitleCountText = rootText;
 }
 
+
+#pragma Get Information on the Manager
+
+- (NSString*)title{
+    
+    return self.headerTitle;
+}
+
+//numOfSections changes based on if manager is expanded
+- (NSUInteger)numOfSections{
+    
+    NSUInteger rowCount = 0;
+    if(self.expanded){
+        rowCount = self.filterSections.count;
+    }
+    return rowCount;
+}
+
+//numOfRows changes based on if the manager is expanded
+//and if it is a hierarchy
+- (NSUInteger)numOfRows{
+    
+    __block NSUInteger rowCount = 0;
+    if(self.hierarchy){
+        rowCount++;
+    }
+    if(self.expanded || !self.hierarchy){
+        [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection* section, NSUInteger index, BOOL *stop){
+            rowCount += section.numOfRows;
+        }];
+    }
+
+    return rowCount;
+}
+
+- (void)clearAllData{
+    
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        [section clearSectionAndLabelData];
+    }];
+}
+
+-(NSUInteger)numOfSelectedRowsForText{
+    
+    __block NSUInteger count = 0;
+    
+    //The sub title text should match just one per selection (if there is one selected record)
+    //even if the checklist has lots of values checked the number just needs to represent that one section has one selected
+    //Ex: 3 surveys selected (though one survey question could have multiple questions selected)
+    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
+        
+        count += section.countOneSelectedRowForSubtitleText;
+    }];
+    
+    return count;
+}
 
 //creates and returns a default accessorized cell to be modified
 - (MHTableViewCell*)createCellWithtableView:(UITableView*)tableView interactionType:(CRUCellViewInteractionType)type checked:(BOOL)checked{
@@ -190,6 +194,8 @@
         cellIdentifier = @"Header";
     }
     else if(type != CRUCellViewInteractionCheckToggle){
+        //Indicator is checked in MHCell's version of initWithStyle
+        //it determines the look of the cell by default
         cellIdentifier = @"Indicator";
     }
     if(!cell){
@@ -268,21 +274,7 @@
     selected = nil;
     return detailedText;
 }
-       
--(NSUInteger)numOfSelectedRowsForText{
-    
-    __block NSUInteger count = 0;
-    
-    //The sub title text should match just one per selection (if there is one selected record)
-    //even if the checklist has lots of values checked the number just needs to represent that one section has one selected
-    //Ex: 3 surveys selected (though one survey question could have multiple questions selected)
-    [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
-        
-            count += section.countOneSelectedRowForSubtitleText;
-    }];
-    
-    return count;
-}
+
 //creates a cell and returns what it should look like depending on if the header has been clicked
 //or if normal cell has been clicked
 -(MHTableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView{
@@ -327,7 +319,7 @@
     return cell;
 }
 
-- (void)selectedRowAtIndexPath: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
+- (void)selectedRowAtIndexPath:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
     
     __block MHTableViewCell *cell = (MHTableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     __block CRUCellViewInteractionType type = cell.cellViewInteractionType;
@@ -413,7 +405,7 @@
 
 
 //toogles the children rows
-- (void)toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
+- (void)toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath{
     
     __block NSIndexPath *tempPath = nil;
     //Get the section for creating array of indexpaths
@@ -447,11 +439,15 @@
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
     pathArray = nil;
-    
 }
 
+//Returns a mutable array of packaged filters for each filter label
+//MHPackaged Filter is made up of key value pairs with a root key value pair
+//if it's a hierarchy. The root shows what type the children expansions are
+//for example surveys and survey questions. Each question name ex: "What is your phone number?"
+//will have a value. Key value pair: Question, Answer and yes there can be exactly the same
+//for the key value pair, so the same key can exist but with different values
 - (NSMutableArray*)returnPackagedFilter{
     
     __block NSString *filterTag = @"";

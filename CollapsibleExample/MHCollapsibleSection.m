@@ -12,13 +12,17 @@
 
 @property (strong, nonatomic) NSArray *filterDataForSection;
 @property (strong, nonatomic) NSString *headerTitle;
-@property (strong, nonatomic) NSString *subTitleItemText;
+@property (strong, nonatomic) NSString *identifier;
+@property (nonatomic) BOOL expanded;
+//This range is key to keep track where to insert/delete
+//it changes depending on sections around it expanding/collapsing
 @property (nonatomic) NSRange filterDataRange;
 @property (nonatomic) UITableViewRowAnimation rowAnimation;
-@property (nonatomic) BOOL expanded;
 //only one modal at a time, this keeps track of which filterDataForSection index
 //is actually being interacted with currently
 @property (nonatomic) NSUInteger currentModalIndex;
+//Makes it easier for outside sources to know what manager this section
+//is associated with, usually corresponds to index of manager array
 @property (nonatomic) NSUInteger managerIndex;
 
 - (MHFilterLabel*)returnOffsetLabel:(NSUInteger)row;
@@ -27,9 +31,14 @@
 
 @implementation MHCollapsibleSection
 
+//This is 1 so that the section text can
+//display the question the user is picking for
+static const NSUInteger numOfSectionsForChecklist = 1;
+
 #pragma Initialize Section
 - (instancetype)initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
                      animation:(UITableViewRowAnimation)animation rowRange:(NSRange)rowRange{
+    
     self = [self init];
     self.filterDataForSection = filters;
     self.headerTitle = headerTitle;
@@ -38,33 +47,55 @@
     return self;
 }
 
-- (instancetype) init{
+- (instancetype)init{
+    
     self = [super init];
     self.filterDataForSection = [[NSArray alloc] init];
     return self;
 }
 
-- (NSArray*)returnCopyOfFilterData{
+#pragma Set Section Specifics
+- (void)setIdentifierWithString:(NSString *)identifier{
     
-    return self.filterDataForSection.copy;
+    self.identifier = identifier;
+}
+
+- (void)setManagerIndexWithIndex:(NSUInteger)index{
+    
+    self.managerIndex = index;
+}
+
+- (void)setCurrentModalIndexWithRow:(NSUInteger)row{
+    
+    //set index to offset so that it will be the proper counter in the array
+    self.currentModalIndex = row-self.filterDataRange.location-1;
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    
+    if(label.labelType == CRUCellViewInteractionTextBox){
+        if(!label.resultsKeysExists){
+            [label setResultsWithKeyArray:@[@""] resultValues:@[[NSNumber numberWithBool:NO]]];
+        }
+    }
+    
 }
 
 #pragma Section Information
 
-- (void)toggleExpanded{
-    self.expanded = !self.expanded;
+- (NSUInteger)returnManagerIndex{
+    
+    return self.managerIndex;
 }
 
-- (BOOL)returnExpanded{
-    return self.expanded;
-}
-
-- (NSString*)title{
-    return self.headerTitle;
+//dynamic header location for this section
+- (NSUInteger)headerRowNum{
+    
+    return self.filterDataRange.location;
 }
 
 //returns count based if section is collapsed or not
 - (NSUInteger)numOfRows{
+    
     NSUInteger count = 0;
     if(self.expanded){
         count += self.filterDataRange.length;
@@ -75,22 +106,28 @@
     return count;
 }
 
-- (void)setManagerIndexWithIndex:(NSUInteger)index{
-    self.managerIndex = index;
-}
-
-- (NSUInteger)returnManagerIndex{
-    return self.managerIndex;
-}
-
-//For section text
-- (NSUInteger)selectedCountForSubTitleText{
-    __block NSUInteger count = 0;
+//static count of data
+- (NSUInteger)itemCount{
     
-    [self.filterDataForSection enumerateObjectsUsingBlock:^(MHFilterLabel *label, NSUInteger index, BOOL *stop){
-        count += label.containsAtLeastOneSelected;
-    }];
-    return count;
+    return self.filterDataForSection.count;
+}
+
+- (BOOL)returnExpanded{
+    
+    return self.expanded;
+}
+
+- (NSString*)title{
+    return self.headerTitle;
+}
+
+- (NSString*)getIdentifier{
+    
+    return self.identifier;
+}
+
+- (void)toggleExpanded{
+    self.expanded = !self.expanded;
 }
 
 //This is not number of selected rows total since a checklist can have multiple selected
@@ -108,21 +145,46 @@
     return count;
 }
 
-- (NSUInteger)selectedCount{
+//For section text
+- (NSUInteger)selectedCountForSubTitleText{
     
     __block NSUInteger count = 0;
     
     [self.filterDataForSection enumerateObjectsUsingBlock:^(MHFilterLabel *label, NSUInteger index, BOOL *stop){
-        count += label.numOfRowsSelected;
+        count += label.containsAtLeastOneSelected;
     }];
     return count;
+}
+
+- (NSUInteger)getCurrentFocusForPicker{
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    NSUInteger currentIndex = label.getCurrentPickedRow;
+    label = nil;
+    return currentIndex;
+    
+}
+
+- (NSString*)getTextForTextArea{
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    NSString *currentText = label.getCurrentText;
+    label = nil;
+    return currentText;
+}
+
+- (NSString*)getPlaceHolderText{
+    
+    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    NSString *description = label.getPlaceHolderText;
+    return description;
 }
 
 - (NSString*)detailedHeaderSectionText{
     
     NSUInteger count = [self selectedCountForSubTitleText];
     NSString *detailedText;
-    NSString *itemTitle = self.subTitleItemText;
+    NSString *itemTitle = self.identifier;
     NSString *plural = @"";
     NSString *selected = @"selected";
     
@@ -144,97 +206,64 @@
         }
     }
     detailedText = [NSString stringWithFormat:NSLocalizedString(@"%i %@ %@%@",), count, selected, itemTitle, plural];
-    
     itemTitle = nil;
     plural = nil;
     selected = nil;
     return detailedText;
 }
 
-- (void)setSubtitleItemTextForSectionWithString:(NSString*)subTitleItemText{
-    
-    self.subTitleItemText = subTitleItemText;
-}
-
-//static count of data
-- (NSUInteger)itemCount{
-    return self.filterDataForSection.count;
-}
-
-//dynamic header location for this section
-- (NSUInteger)headerRowNum{
-    return self.filterDataRange.location;
-}
-
-- (NSString*)getIdentifier{
-    
-    return self.subTitleItemText;
-}
-
 //Set the location with new number, this happens when other
 //sections are collapsed, the location will chanage
 //Manager handles updating
 - (void)resetRangeWithNum:(NSUInteger)newLocation{
+    
     NSUInteger length = self.filterDataRange.length;
     self.filterDataRange = NSMakeRange(newLocation, length);
 }
 
 //Returns if number is in stange
 - (BOOL)rowNumInRange:(NSUInteger)num{
+    
     BOOL inRange = NSLocationInRange(num, self.filterDataRange);
     return inRange;
 }
 
 #pragma Specific Label Information
 - (NSString*)returnLabelNameAtRow:(NSUInteger)row{
+    
     MHFilterLabel *label = [self returnOffsetLabel:row];
     return label.labelName;
 }
 
 - (CRUCellViewInteractionType)returnTypeWithRow:(NSUInteger)row{
+    
     MHFilterLabel *label = [self returnOffsetLabel:row];
     return label.labelType;
 }
 
 - (NSString*)returnDescriptionWithRow:(NSUInteger)row{
+    
     MHFilterLabel *label = [self returnOffsetLabel:row];
     return label.getDescription;
 }
 
+- (NSArray*)returnCopyOfFilterData{
+    
+    return self.filterDataForSection.copy;
+}
+
 
 - (BOOL)checkStateOfRowWithIndexRow:(NSUInteger)row{
+    
     MHFilterLabel *label = [self returnOffsetLabel:row];
     return label.selectedCell;
 }
 
 - (BOOL)toggleCheckAndReturnWithIndex:(NSUInteger)row{
+    
     MHFilterLabel *label = [self returnOffsetLabel:row];
     [label toggleChecked];
     return label.selectedCell;
-}
-
-- (NSUInteger)getCurrentFocusForPicker {
-    
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    NSUInteger currentIndex = label.getCurrentPickedRow;
-    label = nil;
-    return currentIndex;
-    
-}
-
-- (NSString*)getTextForTextArea {
-    
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    NSString *currentText = label.getCurrentText;
-    label = nil;
-    return currentText;
-}
-
-- (NSString*)getLabelDescription{
-    
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    NSString *description = label.getDescription;
-    return description;
 }
 
 //takes row number and converts to corresponding
@@ -244,21 +273,6 @@
     NSUInteger offset = row-self.filterDataRange.location-1;
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:offset];
     return label;
-}
-
-- (void)setCurrentModalIndexWithRow:(NSUInteger)row{
-    
-    //set index to offset so that it will be the proper counter in the array
-    self.currentModalIndex = row-self.filterDataRange.location-1;
-    
-     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    
-    if(label.labelType == CRUCellViewInteractionTextBox){
-        if(!label.resultsKeysExists){
-            [label setResultsWithKeyArray:@[@""] resultValues:@[[NSNumber numberWithBool:NO]]];
-        }
-    }
-    
 }
 
 #pragma PickerViewDelegate
@@ -304,7 +318,6 @@
     return YES;
 }
 
-
 #pragma TableViewDelegate
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -333,13 +346,14 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
    
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    //NSString *description = label.getDescription;
     NSString *description = label.labelName;
     return description;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 1;
+    
+    //static variable set at top
+    return numOfSectionsForChecklist;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -374,21 +388,17 @@
 - (void)saveChanges{
     
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    
     //sets the working dictionary to the static to save changes made by user
     //also resets variables that drive what dictionary is traversed for the label
     [label saveResultsFromChanges];
-    
     label = nil;
 }
 
 - (void)cancelChanges{
     
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    
     //sets the working dictionary to the static to override the users changes
     [label cancelChanges];
-    
     label = nil;
     
 }
@@ -396,11 +406,9 @@
 - (void)clearSelections{
     
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
-    
     //goes through selected dictionary (what user sees) and unchecks
     //every result entry that has been checked
     [label clearSelectedResults];
-    
     label = nil;
     
 }
@@ -422,9 +430,7 @@
 //as a result from collapsing/expanding
 - (void)toggleCollapse: (UITableView*)tableView indexPath:(NSIndexPath*)indexPath
 {
-    //toogle expanded, used to check for if the header has been clicked
-    //self.expanded = !self.expanded;
-
+    
     //+1 is for header, header doesn't get inserted or removed
     NSUInteger start = self.filterDataRange.location+1;
     NSUInteger maxRange = NSMaxRange(self.filterDataRange);
@@ -454,7 +460,6 @@
     }
 
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
 }
 
 

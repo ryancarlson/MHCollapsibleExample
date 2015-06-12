@@ -15,10 +15,9 @@
 @property CRUCellViewInteractionType type;
 @property BOOL checked; //keeps track of simple object check whenever selected
 
-
 //for checks/selections this is the array the user sees and interacts with
 @property (strong, nonatomic) NSMutableArray *mutableResultValues;
-//static key/value pairs
+//static key/value pairs each in different arrays
 @property (strong, nonatomic) NSArray *resultValues;
 @property (strong, nonatomic) NSArray *resultKeys;
 
@@ -26,8 +25,7 @@
 @property (nonatomic) NSUInteger previousPickedRow; //for uipickview
 
 @property (strong, nonatomic) NSString *currentText;
-@property (strong, nonatomic) NSString *labelDescription;//description on modal if wanted
-
+@property (strong, nonatomic) NSString *placeHolderText;
  //specific text for subtitle such as "4 selected questions"
 @property (strong, nonatomic) NSString *itemSubTitleText;
 //specific text for children entiries ex "3 selected answers"
@@ -51,9 +49,10 @@ static const NSUInteger textAreaRow = 0;
     return newLabel;
 }
 
-- (void) setLabelDescriptionWithString:(NSString *)labelDescription{
+#pragma Setters for textfield types
+- (void)setPlaceHolderTextWithString:(NSString *)placeHolderText{
     
-    self.labelDescription = labelDescription;
+    self.placeHolderText = placeHolderText;
 }
 
 - (void)setCurrentTextWithString:(NSString *)currentText{
@@ -63,6 +62,12 @@ static const NSUInteger textAreaRow = 0;
 
 #pragma Getters for specific label
 
+- (NSString*)getPlaceHolderText{
+    
+    return self.placeHolderText;
+}
+
+# pragma Get Label Information
 //Can be used for more description depending on modal
 - (NSString*)getDescription{
     
@@ -119,11 +124,16 @@ static const NSUInteger textAreaRow = 0;
     return self.type;
 }
 
+//Unused by might be helpful for filterviewcontroller subclasses to check
+//since this method returns the entire count of selected results
+//This number is not shown in the UI for the label but rather the results themselves
 - (NSUInteger)numOfRowsSelected{
     
     __block NSUInteger count = 0;
     
     if(self.selectedCell && self.type == CRUCellViewInteractionCheckToggle){
+        //Only count one for toggle type
+        //since multiple records could be selected
         count = 1;
     }
     else{
@@ -152,6 +162,8 @@ static const NSUInteger textAreaRow = 0;
     return hasSelectedItems;
 }
 
+//Returns a number based on if at least one result (or label itself) is selected
+//for non toggle types, the first selected run into will do for the count
 - (NSUInteger)containsAtLeastOneSelected{
     
     __block NSUInteger selectedCount = 0;
@@ -165,8 +177,10 @@ static const NSUInteger textAreaRow = 0;
             }
         }];
     }
-    else{
-        selectedCount = self.numOfRowsSelected;
+    else if(self.selectedCell && self.type == CRUCellViewInteractionCheckToggle){
+        //Just one per selected row since the label itself
+        //is a checklist type/non modal
+        selectedCount = 1;
     }
     return selectedCount;
 }
@@ -175,6 +189,12 @@ static const NSUInteger textAreaRow = 0;
     
     return self.currentPickedRow;
 }
+
+- (NSString*)getCurrentText{
+    
+    return self.resultKeys[textAreaRow];
+}
+
 
 #pragma Setter for Label Sub Data
 
@@ -203,12 +223,6 @@ static const NSUInteger textAreaRow = 0;
     }
     
 }
-
-- (NSString*)getCurrentText{
-
-    return self.resultKeys[textAreaRow];
-}
-
 
 - (void)setLabelItemTextWithString:(NSString*)itemText childrenDescription:(NSString*)childItemText{
     
@@ -262,7 +276,9 @@ static const NSUInteger textAreaRow = 0;
     return checked.boolValue;
 }
 
+//resultKeys.count = results.count = mutableresults.count
 - (NSUInteger)numOfRows{
+    
     return self.resultKeys.count;
 }
 

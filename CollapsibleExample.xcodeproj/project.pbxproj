@@ -25,6 +25,7 @@
 		83D4CB3F1B023875001C9A72 /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB311B023875001C9A72 /* FilterViewController.m */; };
 		83D4CB431B023875001C9A72 /* ContactTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB3A1B023875001C9A72 /* ContactTableViewController.m */; };
 		83D4CB441B023875001C9A72 /* Contact.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB3B1B023875001C9A72 /* Contact.m */; };
+		83DB93FE1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83DB93FD1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,8 @@
 		83D4CB3B1B023875001C9A72 /* Contact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Contact.m; path = ../Contact.m; sourceTree = "<group>"; };
 		83D4CB3C1B023875001C9A72 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Contact.h; path = ../Contact.h; sourceTree = "<group>"; };
 		83D4CB3D1B023875001C9A72 /* ContactTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContactTableViewController.h; path = ../ContactTableViewController.h; sourceTree = "<group>"; };
+		83DB93FC1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleSubclassFilterViewController.h; sourceTree = "<group>"; };
+		83DB93FD1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleSubclassFilterViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +160,8 @@
 				83D4CB3A1B023875001C9A72 /* ContactTableViewController.m */,
 				83D4CB331B023875001C9A72 /* FilterViewController.h */,
 				83D4CB311B023875001C9A72 /* FilterViewController.m */,
+				83DB93FC1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.h */,
+				83DB93FD1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m */,
 				83D4CB321B023875001C9A72 /* MHCollapsibleViewManager.h */,
 				83D4CB301B023875001C9A72 /* MHCollapsibleViewManager.m */,
 			);
@@ -292,6 +297,7 @@
 				83D4CB0D1B023845001C9A72 /* AppDelegate.m in Sources */,
 				83D4CB441B023875001C9A72 /* Contact.m in Sources */,
 				83D4CB0A1B023845001C9A72 /* main.m in Sources */,
+				83DB93FE1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m in Sources */,
 				83B11E301B28BB3A00DE28AE /* MHKeyValuePair.m in Sources */,
 				83B11E2D1B28B40A00DE28AE /* MHPackagedFilter.m in Sources */,
 				83D4CB3F1B023875001C9A72 /* FilterViewController.m in Sources */,
