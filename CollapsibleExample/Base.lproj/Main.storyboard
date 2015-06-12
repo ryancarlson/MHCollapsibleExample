@@ -49,7 +49,7 @@
         <!--Filter-->
         <scene sceneID="k6P-w5-xNi">
             <objects>
-                <tableViewController id="p1N-pv-U4j" customClass="FilterViewController" sceneMemberID="viewController">
+                <tableViewController id="p1N-pv-U4j" customClass="ExampleSubclassFilterViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="yQH-jg-tba">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -87,19 +87,19 @@
                     <toolbarItems>
                         <barButtonItem title="Clear" id="dHR-6S-gM8">
                             <connections>
-                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="g62-HU-X0D"/>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="9Lk-vE-PI0"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Filter" id="qTJ-qa-udj">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="JuX-r5-ZVm">
                             <connections>
-                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="ADU-wJ-JmI"/>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="PU7-EQ-Gps"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" tag="1" title="Save" id="Kxk-7q-j38">
                             <connections>
-                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="VcS-RB-Jdd"/>
+                                <action selector="buttonTapped:" destination="p1N-pv-U4j" id="P6j-bF-Xa8"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

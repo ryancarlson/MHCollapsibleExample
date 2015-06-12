@@ -19,8 +19,8 @@
     [super viewDidLoad];
     self.combinedFilters = [[NSMutableArray alloc] init];
     [self setHalfModalViewLook];
-    [self createManagersAndPopulateData];
-    [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(orientationChanged:)    name:UIDeviceOrientationDidChangeNotification  object:nil];
+    //Notification is for half modals to orientate properly if device is rotated during the modal being shown
+    [[NSNotificationCenter defaultCenter] addObserver:self  selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification  object:nil];
     //The example of this controller just has one view controller added as a sub
     //subclasses may have other view controllers so this is a variable instead of hardcoded
     self.currentSubViewControllerIndex = 0;
@@ -44,8 +44,6 @@
 //the end result should do the following: Managers in an array, each manager has a delegate of this controller
 // Methods to call: initManagerWithAnimation, setDataFilterNames, setSubtitleTextForSectionsWithString
 - (void)createManagersAndPopulateData{
-    
- 
     
 }
 
@@ -436,48 +434,40 @@
     
 }
 
+//For the "half modal" the orientation could change while the modal is up
+//This recreates the frames for the overlay and the navigation controller
+//to make sure it will look proper
 - (void)orientationChanged:(NSNotification *)notification{
     
     if(self.modalCurrentlyShown && self.currentModalType != CRUCellViewInteractionCheckList){
         
+        UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
         UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
         NSUInteger width = self.view.frame.size.width;
         NSUInteger height = self.view.frame.size.height;
         CGPoint offset = self.tableView.contentOffset;
-        UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
+        CGFloat rotation = 0;
         switch (orientation)
         {
-            case UIDeviceOrientationPortrait:
-                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
-                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI)];
-                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(0)];
-                 self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
-                break;
             case UIDeviceOrientationPortraitUpsideDown:
-                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(-M_PI)];
-                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
-                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI_2)];
-                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(-M_PI)];
-                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+                rotation = -M_PI;
+                break;
             case UIDeviceOrientationLandscapeLeft:
-                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(M_PI_2)];
-                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
-                //[navigationController.view setTransform:CGAffineTransformMakeRotation(-M_PI)];
-                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(M_PI_2)];
-                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+                rotation = M_PI_2;
+                break;
             case UIDeviceOrientationLandscapeRight:
-                //[navigationController.navigationBar setTransform:CGAffineTransformMakeRotation(-M_PI_2)];
-                navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
-                //[navigationController.view setTransform:CGAffineTransformMakeRotation(M_PI)];
-                [self.modalOverlay setTransform:CGAffineTransformMakeRotation(-M_PI_2)];
-                self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
+                rotation = -M_PI_2;
             default:
                 break;
         }
-     
+        
+        navigationController.view.frame = CGRectMake(offset.x, offset.y+height/2, width, height/2);
+        //just rotate modal since it doesn't have text or anything to fix
+        [self.modalOverlay setTransform:CGAffineTransformMakeRotation(rotation)];
+        //this is to fix the width/height of overlay after rotation
+        self.modalOverlay.frame = CGRectMake(offset.x, offset.y, width, height);
     }
 }
-
 
 - (void)didReceiveMemoryWarning
 {

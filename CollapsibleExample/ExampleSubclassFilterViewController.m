@@ -167,6 +167,16 @@
     NSArray* filterData = @[[[MHFilterLabel alloc] initLabelWithName:@"Comment Only" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Spiritual Conversation" checked:false interactionType:CRUCellViewInteractionCheckToggle],[[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism" checked:false interactionType:CRUCellViewInteractionCheckToggle] , [[MHFilterLabel alloc] initLabelWithName:@"Personal Evangelism Decisions" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Holy Spirit Presentation" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Graduating on a Mission" checked:false interactionType:CRUCellViewInteractionCheckToggle], [[MHFilterLabel alloc] initLabelWithName:@"Faculty on Mission" checked:false interactionType:CRUCellViewInteractionCheckToggle]];
     return filterData;
 }
+
+- (void)buttonTapped:(UIBarButtonItem *)sender{
+    
+    [super buttonTapped:sender];
+    
+    if(!self.modalCurrentlyShown && [sender.title isEqualToString:@"Save"]){
+        
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
 /*
 #pragma mark - Navigation
 
