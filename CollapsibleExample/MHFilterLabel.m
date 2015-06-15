@@ -304,6 +304,11 @@ static const NSUInteger textAreaRow = 0;
 - (void)clearAndSaveChanges{
     
     [self clearMutableResults];
+    if(self.type == CRUCellViewInteractionTextBox){
+        
+        self.currentText = @"";
+        self.resultKeys = @[self.currentText];
+    }
     self.resultValues = [[NSArray alloc] initWithArray:self.mutableResultValues copyItems:YES];
 }
 

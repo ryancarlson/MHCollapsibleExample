@@ -11,7 +11,8 @@
 @interface MHCollapsibleViewManager()
 
 @property (strong, nonatomic) NSString *headerTitle;
-@property (strong, nonatomic) NSString *subtitleCountText;
+@property (strong, nonatomic) NSString *singleIdentifier;
+@property (strong, nonatomic) NSString *pluralIdentifier;
 @property (strong, nonatomic) NSMutableArray *filterSections;
 @property (nonatomic) UITableViewRowAnimation rowAnimation;
 //hierarchy determines if Manager will be collapsible itself
@@ -30,6 +31,7 @@
 //it does not total up since one section could have a label with results > 1
 //internal method since it's just shown on the table the detailText
 - (NSUInteger)numOfSelectedRowsForText;
+- (NSString*)getIdentifier;
 
 @end
 
@@ -116,15 +118,24 @@
 }
 
 //overrides the "items" text for sections with a specific string
-- (void)setTextIdentifierAndIndexWithString:(NSString *)identifier rootText:(NSString *)rootText managerIndex:(NSUInteger)managerIndex{
+- (void)setTextIdentifierAndIndexWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier managerIndex:(NSUInteger)managerIndex{
     
     [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
         
-        [section setIdentifierWithString:identifier];
+        [section setIdentifierWithString:singleIdentifier pluralIdentifier:pluralIdentifier];
         [section setManagerIndexWithIndex:managerIndex];
     }];
     
-    self.subtitleCountText = rootText;
+    //Defaults to children identifiers unless overwritten by
+    //setTextIdentifierForManager...
+    self.singleIdentifier = singleIdentifier;
+    self.pluralIdentifier = pluralIdentifier;
+}
+
+- (void)setTextIdentifierForManagerWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier{
+    
+    self.singleIdentifier = singleIdentifier;
+    self.pluralIdentifier = pluralIdentifier;
 }
 
 
@@ -242,35 +253,40 @@
     return cell;
 }
 
+- (NSString*)getIdentifier{
+    
+    NSString *identifier;
+    if(self.numOfSelectedRowsForText > 1){
+        identifier = self.pluralIdentifier;
+    }
+    else{
+        identifier = self.singleIdentifier;
+    }
+    return identifier;
+}
+
 - (NSString*)returnDetailText{
     
     NSUInteger count = self.numOfSelectedRowsForText;
     NSString *detailedText;
-    NSString *itemTitle = self.subtitleCountText;
-    NSString *plural = @"";
-    NSString *selected = @"selected";
+    NSString *itemTitle = self.getIdentifier;
+    NSString *textPlacement = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_placement", @"Localizable", nil);
+    NSString  *selected = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_selectedText", @"Localizable", nil);
     
     if(itemTitle == nil){
-        itemTitle = @"item";
+        itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
     }
     
     if(count < 1){
         selected = @"";
-        itemTitle = @"item";
-        count = [self.filterSections count];
+        count = self.filterSections.count;
         if(count > 1){
-            plural = @"s";
+            itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_plural", @"Localizable", nil);
         }
     }
-    else{
-        if(count > 1){
-            plural = @"s";
-        }
-    }
-    detailedText = [NSString stringWithFormat:NSLocalizedString(@"%i %@ %@%@",), count, selected, itemTitle, plural];
+    detailedText = [NSString stringWithFormat:NSLocalizedString(textPlacement,nil), count, selected, itemTitle];
     
     itemTitle = nil;
-    plural = nil;
     selected = nil;
     return detailedText;
 }
@@ -375,6 +391,10 @@
                         //NOTE: this flips the expanded boolean and then returns it
                         BOOL check = [section toggleCheckAndReturnWithIndex:indexRow];
                         [cell changeCellStateWithToggle:check];
+                        //Reload the header row of that modal so it's counter for # of selected items changes
+                        NSIndexPath *rootPath = [NSIndexPath indexPathForRow:section.headerRowNum inSection:section.returnManagerIndex];
+                        [tableView reloadRowsAtIndexPaths:@[rootPath] withRowAnimation:UITableViewRowAnimationNone];
+                        rootPath = nil;
                         *stop = YES;//kick out since we found the row
                     }
                 }];
@@ -464,7 +484,7 @@
             
             if(self.hierarchy){
                 
-                filterTag = self.subtitleCountText;
+                filterTag = self.singleIdentifier;
                 filter = [[MHPackagedFilter alloc] initWithRootKey:filterTag rootValue:section.getIdentifier hierarchy:YES];
             }
             else{

@@ -14,6 +14,7 @@
 		83ACD4881B190CF9000F6F05 /* MHCollapseUpArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 83ACD4861B190CF9000F6F05 /* MHCollapseUpArrow.png */; };
 		83B11E2D1B28B40A00DE28AE /* MHPackagedFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B11E2C1B28B40A00DE28AE /* MHPackagedFilter.m */; };
 		83B11E301B28BB3A00DE28AE /* MHKeyValuePair.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B11E2F1B28BB3A00DE28AE /* MHKeyValuePair.m */; };
+		83B7FC5E1B2F2A8800BD0441 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B7FC601B2F2A8800BD0441 /* Localizable.strings */; };
 		83D4CB0A1B023845001C9A72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB091B023845001C9A72 /* main.m */; };
 		83D4CB0D1B023845001C9A72 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB0C1B023845001C9A72 /* AppDelegate.m */; };
 		83D4CB101B023845001C9A72 /* CollapsibleExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83D4CB0E1B023845001C9A72 /* CollapsibleExample.xcdatamodeld */; };
@@ -51,6 +52,8 @@
 		83B11E2C1B28B40A00DE28AE /* MHPackagedFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHPackagedFilter.m; sourceTree = "<group>"; };
 		83B11E2E1B28BB3A00DE28AE /* MHKeyValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHKeyValuePair.h; sourceTree = "<group>"; };
 		83B11E2F1B28BB3A00DE28AE /* MHKeyValuePair.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHKeyValuePair.m; sourceTree = "<group>"; };
+		83B7FC5F1B2F2A8800BD0441 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		83B7FC611B2F2DC100BD0441 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		83D4CB041B023845001C9A72 /* CollapsibleExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollapsibleExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D4CB081B023845001C9A72 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D4CB091B023845001C9A72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -171,6 +174,7 @@
 		83D4CB461B024C03001C9A72 /* Object Types */ = {
 			isa = PBXGroup;
 			children = (
+				83B7FC601B2F2A8800BD0441 /* Localizable.strings */,
 				83ACD4851B190CF9000F6F05 /* MHCollapseDownArrow.png */,
 				83ACD4861B190CF9000F6F05 /* MHCollapseUpArrow.png */,
 				830349C11B0BBDCD000B03C0 /* MHCollapsibleSection.h */,
@@ -270,6 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83ACD4881B190CF9000F6F05 /* MHCollapseUpArrow.png in Resources */,
+				83B7FC5E1B2F2A8800BD0441 /* Localizable.strings in Resources */,
 				83D4CB161B023845001C9A72 /* Main.storyboard in Resources */,
 				83D4CB1B1B023845001C9A72 /* LaunchScreen.xib in Resources */,
 				83ACD4871B190CF9000F6F05 /* MHCollapseDownArrow.png in Resources */,
@@ -326,6 +331,16 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		83B7FC601B2F2A8800BD0441 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				83B7FC5F1B2F2A8800BD0441 /* Base */,
+				83B7FC611B2F2DC100BD0441 /* en */,
+			);
+			name = Localizable.strings;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		83D4CB141B023845001C9A72 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

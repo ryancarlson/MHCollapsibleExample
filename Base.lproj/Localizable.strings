@@ -1,0 +1,20 @@
+/* 
+  Localizable.strings
+  CollapsibleExample
+
+  Created by Lizzy Randall on 6/15/15.
+  Copyright (c) 2015 Lizzy Randall. All rights reserved.
+*/
+"MHFilterViewController_Interaction_CellHeader_defaultText_placement" = "%i %@ %@";
+"MHFilterViewController_Interaction_CellHeader_defaultText_single" = "item";
+"MHFilterViewController_Interaction_CellHeader_defaultText_plural" = "items";
+"MHFilterViewController_Interaction_CellHeader_selectedText" = "selected";
+"MHFilterViewController_Interaction_CellHeader_label_single" = "label";
+"MHFilterViewController_Interaction_CellHeader_label_plural" = "labels";
+"MHFilterViewController_Interaction_CellHeader_survey_single" = "survey";
+"MHFilterViewController_Interaction_CellHeader_survey_plural" = "surveys";
+"MHFilterViewController_Interaction_CellHeader_survey_question_single" = "question";
+"MHFilterViewController_Interaction_CellHeader_survey_question_plural" = "questions";
+"MHFilterViewController_Interaction_CellHeader_survey_placeHolder" = "Type keywords for survey answer here";
+"MHFilterViewController_Interaction_CellHeader_interaction_single" = "interaction";
+"MHFilterViewController_Interaction_CellHeader_interaction_plural" = "interactions";

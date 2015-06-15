@@ -28,19 +28,9 @@
 
 @end
 
-@interface MHCollapsibleViewManagerDeletegate : NSObject{
-    
-    id <MHCollapibleViewManagerDelegate> _delegate;
-}
-
-
-- (void) createModalWithType:(CRUCellViewInteractionType)cellType section:(MHCollapsibleSection*)section rowPath:(NSIndexPath*)rowPath;
-
-@end
-
 @interface MHCollapsibleViewManager : NSObject
 
-@property (nonatomic, strong) id delegate;
+@property (nonatomic, weak) id delegate;
 
 //INIT METHODS
 
@@ -60,7 +50,10 @@
 
 //Identifier is a singleton of what are the sections, ex: label, question
 //while rootText gives the root such as survey
-- (void)setTextIdentifierAndIndexWithString:(NSString*)identifier rootText:(NSString*)rootText managerIndex:(NSUInteger)managerIndex;
+- (void)setTextIdentifierAndIndexWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier managerIndex:(NSUInteger)managerIndex;
+
+//If this is not set, the manager will use the sections identifier combo above
+- (void)setTextIdentifierForManagerWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier;
 
 //RETURN METHODS
 
