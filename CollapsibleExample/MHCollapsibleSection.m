@@ -198,7 +198,6 @@ static const NSUInteger numOfSectionsForChecklist = 1;
     NSUInteger count = self.selectedCountForSubTitleText;
     NSString *detailedText;
     NSString *itemTitle = self.getIdentifier;
-    NSString *textPlacement = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_placement", @"Localizable", nil);
     
     if(itemTitle == nil){
         itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
@@ -211,7 +210,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
         }
     }
     
-    detailedText = [NSString stringWithFormat:NSLocalizedString(textPlacement,nil), count, itemTitle];
+    detailedText = [NSString stringWithFormat:NSLocalizedString(itemTitle, nil), count];
     itemTitle = nil;
     return detailedText;
 }

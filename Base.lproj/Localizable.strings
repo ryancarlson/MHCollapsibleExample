@@ -5,22 +5,19 @@
   Created by Lizzy Randall on 6/15/15.
   Copyright (c) 2015 Lizzy Randall. All rights reserved.
 */
-/*Filter - helpful to have a number of some sort so # __ items"*/
-"MHFilterViewController_Interaction_CellHeader_defaultText_placement" = "%i %@";
-/*Default entity text for MHCollapsibleViewManager if one not provided by viewcontroller*/
-"MHFilterViewController_Interaction_CellHeader_defaultText_single" = "item";
-"MHFilterViewController_Interaction_CellHeader_defaultText_plural" = "items";
-/*If entitiy gets selected for filter, the text will say # selected ...*/
-"MHFilterViewController_Interaction_CellHeader_selectedText" = "selected";
+/*FilterViewController strings, please note most of these have number in placement, required for any language*/
+/*Default entity text for MHCollapsibleViewManager if one not provided by viewcontroller includes # identifier*/
+"MHFilterViewController_Interaction_CellHeader_defaultText_single" = "%i item";
+"MHFilterViewController_Interaction_CellHeader_defaultText_plural" = "%i items";
 /*Filter text entity for labels*/
-"MHFilterViewController_Interaction_CellHeader_label_single" = "selected label";
-"MHFilterViewController_Interaction_CellHeader_label_plural" = "selected labels";
+"MHFilterViewController_Interaction_CellHeader_label_single" = "%i selected label";
+"MHFilterViewController_Interaction_CellHeader_label_plural" = "%i selected labels";
 /*Filter text entities for surveys*/
-"MHFilterViewController_Interaction_CellHeader_survey_single" = "selected survey";
-"MHFilterViewController_Interaction_CellHeader_survey_plural" = "selected surveys";
-"MHFilterViewController_Interaction_CellHeader_survey_question_single" = "selected question";
-"MHFilterViewController_Interaction_CellHeader_survey_question_plural" = "selected questions";
+"MHFilterViewController_Interaction_CellHeader_survey_single" = "%i selected survey";
+"MHFilterViewController_Interaction_CellHeader_survey_plural" = "%i selected surveys";
+"MHFilterViewController_Interaction_CellHeader_survey_question_single" = "%i selected question";
+"MHFilterViewController_Interaction_CellHeader_survey_question_plural" = "%i selected questions";
 "MHFilterViewController_Interaction_CellHeader_survey_placeHolder" = "Type keywords for survey answer here";
 /*Filter Text entity for interactions*/
-"MHFilterViewController_Interaction_CellHeader_interaction_single" = "selected interaction";
-"MHFilterViewController_Interaction_CellHeader_interaction_plural" = "selected interactions";
+"MHFilterViewController_Interaction_CellHeader_interaction_single" = "%i selected interaction";
+"MHFilterViewController_Interaction_CellHeader_interaction_plural" = "%i selected interactions";

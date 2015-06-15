@@ -270,7 +270,6 @@
     NSUInteger count = self.numOfSelectedRowsForText;
     NSString *detailedText;
     NSString *itemTitle = self.getIdentifier;
-    NSString *textPlacement = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_placement", @"Localizable", nil);
     
     if(itemTitle == nil){
         itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
@@ -282,7 +281,7 @@
             itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_plural", @"Localizable", nil);
         }
     }
-    detailedText = [NSString stringWithFormat:NSLocalizedString(textPlacement,nil), count, itemTitle];
+    detailedText = [NSString stringWithFormat:NSLocalizedString(itemTitle,nil), count];
     
     itemTitle = nil;
     return detailedText;
