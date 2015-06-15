@@ -53,9 +53,15 @@
     
     //do not do plural, just singleton
     //this identifies uniquely what the filters are
-    [labels setTextIdentifierAndIndexWithString:@"label" rootText:@"label" managerIndex:0];
-    [surveys setTextIdentifierAndIndexWithString:@"question" rootText:@"survey" managerIndex:1];
-    [interactions setTextIdentifierAndIndexWithString:@"interaction" rootText:@"interaction" managerIndex:2];
+    [labels setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_single", @"Localizable", nil)
+                                         pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_plural", @"Localizable", nil) managerIndex:0];
+    [surveys setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_question_single", @"Localizable", nil)
+                                          pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_question_plural", @"Localizable", nil)
+                                              managerIndex:1];
+    [surveys setTextIdentifierForManagerWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_single", @"Localizable", nil)
+                                            pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_plural", @"Localizable", nil)];
+    [interactions setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_interaction_single", @"Localizable", nil)
+                                               pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_interaction_plural", @"Localizable", nil) managerIndex:2];
     
     //ManagerArray stores each controller or manager
     labels.delegate = self;
@@ -78,32 +84,34 @@
 - (NSArray*)returnInternationalStudentsArray{
     
     NSArray *filterData;
+    NSString *placeHolderText =  NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_placeHolder", @"Localizable", nil);
+    
     MHFilterLabel *checkListLabel = [[MHFilterLabel alloc] initLabelWithName:@"English Name" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"姓名（汉字)" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel2 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel2 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel3 = [[MHFilterLabel alloc] initLabelWithName:@"Spiritual Status" checked:NO interactionType:CRUCellViewInteractionCheckList];
     [checkListLabel3 setResultsWithKeyArray:@[@"Unknown", @"Non-believer, uninterested", @"Non-believer, seeking", @"Believer, new/needs follow-up", @"Believer, established/growing", @"Believer, ministering", @"Believer, multiplying", @"No Response"] resultValues:@[@NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO]];
     MHFilterLabel *checkListLabel4 = [[MHFilterLabel alloc] initLabelWithName:@"Martial Status" checked:NO interactionType:CRUCellViewInteractionCheckList];
     [checkListLabel4 setResultsWithKeyArray:@[@"Single", @"Married", @"Divorced", @"No Response"] resultValues:@[@NO, @NO, @NO, @NO]];
     MHFilterLabel *checkListLabel5 = [[MHFilterLabel alloc] initLabelWithName:@"Spouse" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel5 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel5 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel6 = [[MHFilterLabel alloc] initLabelWithName:@"Children" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel6 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel6 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel7 = [[MHFilterLabel alloc] initLabelWithName:@"Hometown/Province" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel7 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel7 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel8 = [[MHFilterLabel alloc] initLabelWithName:@"University in Home Country" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel8 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel8 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel9 = [[MHFilterLabel alloc] initLabelWithName:@"Major/Field of Study" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel9 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel9 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel10 = [[MHFilterLabel alloc] initLabelWithName:@"Church" checked:NO interactionType:CRUCellViewInteractionCheckList];
     [checkListLabel10 setResultsWithKeyArray:@[@"中华教会 OCC (Bumby/Rouse)", @"福音教会 OCECC", @"灵粮堂 Bread of Life (Red Bug)", @"台福教会 Dr. Wu's", @"基石教会 Living Stone", @"Other", @"None", @"No Response"] resultValues:@[@NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO]];
     MHFilterLabel *checkListLabel11 = [[MHFilterLabel alloc] initLabelWithName:@"Church(if other)" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel11 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel11 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel12 = [[MHFilterLabel alloc] initLabelWithName:@"Date of Arrival in Orlando" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel12 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel12 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel13 = [[MHFilterLabel alloc] initLabelWithName:@"Date of Departure in Orlando" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel13 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel13 setPlaceHolderTextWithString:placeHolderText];
     MHFilterLabel *checkListLabel14 = [[MHFilterLabel alloc] initLabelWithName:@"Notes" checked:NO interactionType:CRUCellViewInteractionTextBox];
     filterData = @[checkListLabel, checkListLabel2, checkListLabel3, checkListLabel4, checkListLabel5, checkListLabel6, checkListLabel7, checkListLabel8, checkListLabel9, checkListLabel10,
                    checkListLabel11, checkListLabel12, checkListLabel13, checkListLabel14];
@@ -121,17 +129,19 @@
 
 - (NSArray*)returnGuestbookArray{
     
+    NSString *placeHolderText =  NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_placeHolder", @"Localizable", nil);
+    
     MHFilterLabel *checkListLabel = [[MHFilterLabel alloc] initLabelWithName:@"What is your email address?" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel setPlaceHolderTextWithString:placeHolderText];
     
     MHFilterLabel *checkListLabel2 = [[MHFilterLabel alloc] initLabelWithName:@"What is your gender?" checked:NO interactionType:CRUCellViewInteractionCheckList];
     [checkListLabel2 setResultsWithKeyArray:@[@"Female", @"Male", @"No Response"] resultValues:@[@NO, @NO, @NO]];
     
     MHFilterLabel *checkListLabel3 = [[MHFilterLabel alloc] initLabelWithName:@"What is your home country?" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel3 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel3 setPlaceHolderTextWithString:placeHolderText];
     
     MHFilterLabel *checkListLabel4 = [[MHFilterLabel alloc] initLabelWithName:@"What is your home country?" checked:NO interactionType:CRUCellViewInteractionTextBox];
-    [checkListLabel4 setPlaceHolderTextWithString:@"Type keywords for survey answer here"];
+    [checkListLabel4 setPlaceHolderTextWithString:placeHolderText];
     
     MHFilterLabel *checkListLabel5 = [[MHFilterLabel alloc] initLabelWithName:@"How long have you been in America?" checked:NO interactionType:CRUCellViewInteractionCheckList];
     [checkListLabel5 setResultsWithKeyArray:@[@"Less than 1 month", @"1-3 months", @"4-12 months", @"1-2 years", @"2+ years", @"No Response"] resultValues:@[@NO, @NO, @NO, @NO, @NO, @NO]];

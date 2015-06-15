@@ -12,7 +12,8 @@
 
 @property (strong, nonatomic) NSArray *filterDataForSection;
 @property (strong, nonatomic) NSString *headerTitle;
-@property (strong, nonatomic) NSString *identifier;
+@property (strong, nonatomic) NSString *pluralIdentifier;
+@property (strong, nonatomic) NSString *singleIdentifier;
 @property (nonatomic) BOOL expanded;
 //This range is key to keep track where to insert/delete
 //it changes depending on sections around it expanding/collapsing
@@ -40,10 +41,13 @@ static const NSUInteger numOfSectionsForChecklist = 1;
                      animation:(UITableViewRowAnimation)animation rowRange:(NSRange)rowRange{
     
     self = [self init];
-    self.filterDataForSection = filters;
-    self.headerTitle = headerTitle;
-    self.filterDataRange = rowRange;
-    self.expanded = false;
+    if(self){
+        
+        self.filterDataForSection = filters;
+        self.headerTitle = headerTitle;
+        self.filterDataRange = rowRange;
+        self.expanded = false;
+    }
     return self;
 }
 
@@ -55,9 +59,11 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 }
 
 #pragma Set Section Specifics
-- (void)setIdentifierWithString:(NSString *)identifier{
+//What entities are actually selected
+- (void)setSelectedIdentifierWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier{
     
-    self.identifier = identifier;
+    self.singleIdentifier = singleIdentifier;
+    self.pluralIdentifier = pluralIdentifier;
 }
 
 - (void)setManagerIndexWithIndex:(NSUInteger)index{
@@ -70,7 +76,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
     //set index to offset so that it will be the proper counter in the array
     self.currentModalIndex = row-self.filterDataRange.location-1;
     
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    MHFilterLabel *label = self.filterDataForSection[self.currentModalIndex];
     
     if(label.labelType == CRUCellViewInteractionTextBox){
         if(!label.resultsKeysExists){
@@ -123,7 +129,14 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 
 - (NSString*)getIdentifier{
     
-    return self.identifier;
+    NSString *identifier;
+    if(self.selectedCountForSubTitleText > 1){
+        identifier = self.pluralIdentifier;
+    }
+    else{
+        identifier = self.singleIdentifier;
+    }
+    return identifier;
 }
 
 - (void)toggleExpanded{
@@ -182,33 +195,23 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 
 - (NSString*)detailedHeaderSectionText{
     
-    NSUInteger count = [self selectedCountForSubTitleText];
+    NSUInteger count = self.selectedCountForSubTitleText;
     NSString *detailedText;
-    NSString *itemTitle = self.identifier;
-    NSString *plural = @"";
-    NSString *selected = @"selected";
+    NSString *itemTitle = self.getIdentifier;
     
     if(itemTitle == nil){
-        itemTitle = @"item";
+        itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
     }
     
     if(count < 1){
-        selected = @"";
-        itemTitle = @"item";
         count = self.itemCount;
         if(count > 1){
-            plural = @"s";
+            itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_plural", @"Localizable", nil);
         }
     }
-    else{
-        if(count > 1){
-            plural = @"s";
-        }
-    }
-    detailedText = [NSString stringWithFormat:NSLocalizedString(@"%i %@ %@%@",), count, selected, itemTitle, plural];
+    
+    detailedText = [NSString stringWithFormat:NSLocalizedString(itemTitle, nil), count];
     itemTitle = nil;
-    plural = nil;
-    selected = nil;
     return detailedText;
 }
 
@@ -387,7 +390,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 # pragma Changes Triggered By Modals
 - (void)saveChanges{
     
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    MHFilterLabel *label = self.filterDataForSection[self.currentModalIndex];
     //sets the working dictionary to the static to save changes made by user
     //also resets variables that drive what dictionary is traversed for the label
     [label saveResultsFromChanges];
@@ -396,7 +399,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 
 - (void)cancelChanges{
     
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    MHFilterLabel *label = self.filterDataForSection[self.currentModalIndex];
     //sets the working dictionary to the static to override the users changes
     [label cancelChanges];
     label = nil;
@@ -405,7 +408,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
 
 - (void)clearSelections{
     
-    MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
+    MHFilterLabel *label = self.filterDataForSection[self.currentModalIndex];
     //goes through selected dictionary (what user sees) and unchecks
     //every result entry that has been checked
     [label clearSelectedResults];
