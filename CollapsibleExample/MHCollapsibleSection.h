@@ -23,9 +23,10 @@
 - (instancetype)initWithArray:(NSArray*)filters headerTitle:(NSString*)headerTitle
                      animation:(UITableViewRowAnimation)animation rowRange:(NSRange)rowRange;
 
-//A singleton idenfitier for example labels, surveys, etc.
-//What entities are actually selected
-- (void)setIdentifierWithString:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier;
+//A singleton idenfitier for example selected labels, surveys, etc.
+//What entities are actually selected and specifying selected text since a different language could have
+//# entity selected instead of # selected entity
+- (void)setSelectedIdentifierWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier;
 
 //Manager index identifies which manager this section belongs too
 //it makes it easier for the filterviewcontroller to interact

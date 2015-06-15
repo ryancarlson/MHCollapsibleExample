@@ -122,7 +122,7 @@
     
     [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *section, NSUInteger index, BOOL *stop){
         
-        [section setIdentifierWithString:singleIdentifier pluralIdentifier:pluralIdentifier];
+        [section setSelectedIdentifierWithSingleIdentifier:singleIdentifier pluralIdentifier:pluralIdentifier];
         [section setManagerIndexWithIndex:managerIndex];
     }];
     
@@ -271,23 +271,20 @@
     NSString *detailedText;
     NSString *itemTitle = self.getIdentifier;
     NSString *textPlacement = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_placement", @"Localizable", nil);
-    NSString  *selected = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_selectedText", @"Localizable", nil);
     
     if(itemTitle == nil){
         itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
     }
     
     if(count < 1){
-        selected = @"";
         count = self.filterSections.count;
         if(count > 1){
             itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_plural", @"Localizable", nil);
         }
     }
-    detailedText = [NSString stringWithFormat:NSLocalizedString(textPlacement,nil), count, selected, itemTitle];
+    detailedText = [NSString stringWithFormat:NSLocalizedString(textPlacement,nil), count, itemTitle];
     
     itemTitle = nil;
-    selected = nil;
     return detailedText;
 }
 

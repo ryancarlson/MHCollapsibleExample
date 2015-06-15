@@ -1,0 +1,27 @@
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "10O-kb-IB0"; */
+"10O-kb-IB0.text" = "Detail";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "89S-va-4z4"; */
+"89S-va-4z4.text" = "Title";
+
+/* Class = "UIBarButtonItem"; title = "Menu"; ObjectID = "Ivq-dp-HFz"; */
+"Ivq-dp-HFz.title" = "Menu";
+
+/* Class = "UIBarButtonItem"; title = "Cancel"; ObjectID = "JuX-r5-ZVm"; */
+"JuX-r5-ZVm.title" = "Cancel";
+
+/* Class = "UIBarButtonItem"; title = "Save"; ObjectID = "Kxk-7q-j38"; */
+"Kxk-7q-j38.title" = "Save";
+
+/* Class = "UINavigationItem"; title = "Contacts"; ObjectID = "SWp-Xb-mlc"; */
+"SWp-Xb-mlc.title" = "Contacts";
+
+/* Class = "UIBarButtonItem"; title = "Clear"; ObjectID = "dHR-6S-gM8"; */
+"dHR-6S-gM8.title" = "Clear";
+
+/* Class = "UINavigationItem"; title = "Filter"; ObjectID = "qTJ-qa-udj"; */
+"qTJ-qa-udj.title" = "Filter";
+
+/* Class = "UIBarButtonItem"; title = "Filter"; ObjectID = "rfF-Gh-bIn"; */
+"rfF-Gh-bIn.title" = "Filter";
