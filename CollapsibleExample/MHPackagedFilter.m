@@ -28,7 +28,9 @@
 
 - (void)addFilterWithKey:(NSString*)key value:(NSString*)value{
     
-    [self.filterKeyValuePairs addObject:@{key: value}];
+    MHKeyValuePair *keyValue = [[MHKeyValuePair alloc] initWithKey:key value:value];
+    [self.filterKeyValuePairs addObject:keyValue];
+    keyValue = nil;
     
 }
 
