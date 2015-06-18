@@ -70,12 +70,12 @@
 - (void)setFilterArraysWithFirstArrayAsHeaderTitles:(NSArray*)firstArray, ... NS_REQUIRES_NIL_TERMINATION{
     
     NSArray *headerTitles = firstArray;
-    __block NSArray *filterArray = firstArray;
-    __block NSUInteger count = 0; //tells of hierarchy
-    __block MHCollapsibleSection *section;
-    __block NSUInteger filterCount =  0;
-    __block NSUInteger start = 1;
-    __block NSRange range;
+    NSArray *filterArray = firstArray;
+    NSUInteger count = 0; //tells of hierarchy
+    MHCollapsibleSection *section;
+    NSUInteger filterCount =  0;
+    NSUInteger start = 1;
+    NSRange range;
     
     //Defaults to hierarchy, based on count that will change
     self.hierarchy = YES;
@@ -108,7 +108,6 @@
 
         //There should be only one section in this manager, but the loop is better to code for just in case
         [self.filterSections enumerateObjectsUsingBlock:^(MHCollapsibleSection *loopSection, NSUInteger index, BOOL *stop){
-                
             [loopSection resetRangeWithNum:start];
         }];
         self.hierarchy = NO;
