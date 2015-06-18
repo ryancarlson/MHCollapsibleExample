@@ -429,7 +429,9 @@ static const NSUInteger numOfSectionsForChecklist = 1;
         if(label.selectedCell){
             [label toggleChecked];
         }
-        [label clearAndSaveChanges];
+        if(label.containsAtLeastOneSelected > 0){
+            [label clearAndSaveChanges];
+        }
     }];
 }
 
