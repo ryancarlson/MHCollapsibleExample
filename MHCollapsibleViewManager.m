@@ -19,8 +19,8 @@
 //otherwise there is just one MHCollapsibleSection dictating itself
 @property (nonatomic) BOOL hierarchy;
 //Boolean keeps track if header has been clicked
-//expanded = true means children rows are shown
-//expanded = false means children rows are not shown
+//expanded = YES means children rows are shown
+//expanded = NO means children rows are not shown
 @property (nonatomic) BOOL expanded;
 
 - (void)toggleCollapse:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath;
@@ -43,9 +43,9 @@
     self = [super init];
     if(self){
         self.filterSections = [NSMutableArray alloc];
-        self.hierarchy = false;
+        self.hierarchy = NO;
         self.headerTitle = @"";
-        self.expanded = false;
+        self.expanded = NO;
         self.rowAnimation = UITableViewRowAnimationFade;
     }
     return self;
@@ -58,7 +58,7 @@
     self = [self init];
     if(self){
         self.headerTitle = title;
-        self.hierarchy = false;
+        self.hierarchy = NO;
         self.rowAnimation = animation;
         self.filterSections = [self.filterSections init];
     }
@@ -149,9 +149,9 @@
         //filterNames should have multiple arrays if it was a hierarchy
         //if just one, it's treated the same as a regular array, single MHCollapsibleSection
         if(filterCount > 1 && [[filterNames objectAtIndex:0] isKindOfClass: [NSArray class]]){
-            self.hierarchy = true;
+            self.hierarchy = YES;
             start += 1;
-            self.expanded = false;
+            self.expanded = NO;
         }
         
         if(headerTitles.count == filterCount){
@@ -346,7 +346,7 @@
     __block  NSString *cellText = nil;
     __block  NSString *detailText = nil;
     __block  NSUInteger indexRow = indexPath.row;
-    __block  BOOL collapsed = false;
+    __block  BOOL collapsed = NO;
     
     //handle Manager specifics
     if(self.hierarchy && indexRow == 0){

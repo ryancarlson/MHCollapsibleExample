@@ -72,7 +72,7 @@
     self.accessoryType = self.defaultAccessoryType;
     self.selectionStyle = self.defaultSelectionStyle;
     
-    self.checked = false;
+    self.checked = NO;
     return self;
 }
 

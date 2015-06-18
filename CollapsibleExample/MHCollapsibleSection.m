@@ -46,7 +46,7 @@ static const NSUInteger numOfSectionsForChecklist = 1;
         self.filterDataForSection = filters;
         self.headerTitle = headerTitle;
         self.filterDataRange = rowRange;
-        self.expanded = false;
+        self.expanded = NO;
     }
     return self;
 }
