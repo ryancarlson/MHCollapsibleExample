@@ -205,8 +205,13 @@ static const NSUInteger numOfSectionsForChecklist = 1;
     
     if(count < 1){
         count = self.itemCount;
-        if(count > 1){
+        //plural is needed for 0 items and # of items greater than 1
+        if(count == 0 || count > 1){
             itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_plural", @"Localizable", nil);
+        }
+        //only one item, don't need plural
+        else{
+            itemTitle = NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_defaultText_single", @"Localizable", nil);
         }
     }
     
