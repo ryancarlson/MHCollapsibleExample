@@ -317,14 +317,21 @@ static const NSUInteger numOfSectionsForChecklist = 1;
     
     MHFilterLabel *label = [self.filterDataForSection objectAtIndex:self.currentModalIndex];
     [label setCurrentTextWithString:textField.text];
+    [textField resignFirstResponder];
     label = nil;
 }
-
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     
     return YES;
 }
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    [textField resignFirstResponder];
+    return YES;
+}
+
 
 #pragma TableViewDelegate
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{

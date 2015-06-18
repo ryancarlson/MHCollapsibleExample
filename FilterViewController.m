@@ -159,9 +159,7 @@
             
             UIViewController *pickerViewController = [[UIViewController alloc] init];
             [self setButtonsAndColorWithController:pickerViewController bgColor:[UIColor whiteColor] cancel:cancel save:save clear:nil];
-            //[pickerViewController.view addSubview:labelText];
             [pickerViewController.view addSubview:picker];
-  
             
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pickerViewController];
             [self setSettingsForNavWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
@@ -180,14 +178,15 @@
             UITextField *textField = [self createTextFieldWithSection:section cgSize:self.view.frame.size];
             
             UIViewController *textAreaController = [[UIViewController alloc] init];
-            [self setButtonsAndColorWithController:textAreaController bgColor:[UIColor whiteColor] cancel:cancel save:save clear:nil];
+            [self setButtonsAndColorWithController:textAreaController bgColor:[UIColor whiteColor] cancel:cancel save:save clear:clear];
             
             [textAreaController.view addSubview:descriptionText];
             [textAreaController.view addSubview:textField];
             
+            
             UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:textAreaController];
-            [self setSettingsForNavWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
-            [self bringUpHalfModalWithController:navigationController cgSize:self.view.bounds.size offSet:self.tableView.contentOffset];
+            navigationController.toolbarHidden = NO;
+            [self presentViewController:navigationController animated:YES completion:nil];
             
             navigationController = nil;
             textAreaController = nil;
@@ -328,7 +327,7 @@
     [self.currentSection saveChanges];
     
     //since checklist type uses real modal
-    if(self.currentModalType != CRUCellViewInteractionCheckList){
+    if(self.currentModalType != CRUCellViewInteractionCheckList && self.currentModalType != CRUCellViewInteractionTextBox){
     
         //currentSubViewControllerIndex is set as 0 by default in viewDidLoad
         UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
@@ -367,7 +366,7 @@
     [self.currentSection cancelChanges];
     
     //since checklist type is a true modal
-    if(self.currentModalType != CRUCellViewInteractionCheckList){
+    if(self.currentModalType != CRUCellViewInteractionCheckList && self.currentModalType != CRUCellViewInteractionTextBox){
     
         //currentSubViewControllerIndex is set as 0 by default in viewDidLoad
         UINavigationController *navigationController = self.childViewControllers[self.currentSubViewControllerIndex];
@@ -423,7 +422,7 @@
 - (void)resignFirstResponderWithClearOption:(BOOL)clear{
     
     //currentSubViewControllerIndex set 0 default in viewdidload
-    UINavigationController *navigationController = (UINavigationController*)self.childViewControllers[self.currentSubViewControllerIndex];
+    UINavigationController *navigationController = (UINavigationController*)self.presentedViewController;
     UIViewController *textFieldViewController = navigationController.topViewController;
     
     [textFieldViewController.view.subviews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger index, BOOL *stop){
