@@ -26,6 +26,13 @@
     self.currentSubViewControllerIndex = 0;
 }
 
+- (void)viewDidDisappear:(BOOL)animated{
+    
+    [super viewDidDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
 #pragma Set Modal and Manager Settings
 //Can be overwritten or added onto since the objects exist on the class
 //rather than in the method
