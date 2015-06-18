@@ -11,6 +11,7 @@
 @interface ExampleSubclassFilterViewController ()
 
 - (NSArray*)returnLabelArray;
+- (NSArray*)returnInteractionsArray;
 - (NSArray*)returnAssignedToArray;
 - (NSArray*)returnGuestbookArray;
 - (NSArray*)returnEngelsScaleArray;
@@ -36,20 +37,22 @@
     
     MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
     
+    [labels setFilterArraysWithFirstArrayAsHeaderTitles:@[@"Labels"], self.returnLabelArray, nil];
     //sends double array for filternames and single array for header lines
-    [labels setDataWithFilterNames:self.returnLabelArray headerTitles:@[@"Labels"]];
+    //[labels setDataWithFilterNames:self.returnLabelArray headerTitles:@[@"Labels"]];
     
     MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
     
     NSArray *surveyQuestions = @[self.returnGuestbookArray, self.returnEngelsScaleArray, self.returnInternationalStudentsArray];
     NSArray *surveyList = @[@"Bridges@UCF Guestbook", @"Engels Scale", @"International Students"];
-    [surveys setDataWithFilterNames:surveyQuestions headerTitles:surveyList];
+    [surveys setFilterArraysWithFirstArrayAsHeaderTitles:surveyList, self.returnGuestbookArray, self.returnEngelsScaleArray, self.returnInternationalStudentsArray, nil];
     surveyList = nil;
     surveyQuestions = nil;
     
     MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
     //Index 0 is title
-    [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
+    [interactions setFilterArraysWithFirstArrayAsHeaderTitles:@[@"Interactions"], self.returnInteractionsArray, nil];
+    //[interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
     
     //do not do plural, just singleton
     //this identifies uniquely what the filters are

@@ -55,6 +55,8 @@
 //If this is not set, the manager will use the sections identifier combo above
 - (void)setTextIdentifierForManagerWithSingleIdentifier:(NSString *)singleIdentifier pluralIdentifier:(NSString*)pluralIdentifier;
 
+- (void)setFilterArraysWithFirstArrayAsHeaderTitles:(NSArray*)firstArray, ... NS_REQUIRES_NIL_TERMINATION;
+
 //RETURN METHODS
 
 - (MHTableViewCell*)returnCellWithIndex:(NSIndexPath*)indexPath tableView:(UITableView*)tableView;
