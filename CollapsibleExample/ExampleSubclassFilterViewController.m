@@ -67,7 +67,8 @@
     labels.delegate = self;
     surveys.delegate = self;
     interactions.delegate = self;
-    self.managerArray = [NSMutableArray arrayWithObjects:labels, surveys, interactions, nil];
+    
+    [self setManagerArrayWith:[NSMutableArray arrayWithObjects:labels, surveys, interactions, nil]];
     
     surveys = nil;
     labels = nil;

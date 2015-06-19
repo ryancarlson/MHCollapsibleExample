@@ -26,7 +26,7 @@
     
     simpleFilter.delegate = self;
     
-    self.managerArray = [NSMutableArray arrayWithObject: simpleFilter];
+    [self setManagerArrayWith:[NSMutableArray arrayWithObject: simpleFilter]];
 }
 
 - (NSArray *)simpleFilterArray {

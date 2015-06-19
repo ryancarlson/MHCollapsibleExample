@@ -10,6 +10,8 @@
 
 @interface FilterViewController()
 
+@property (strong, nonatomic) NSMutableArray *managerArray;
+
 //used for picker and textfield type modals since they only take up half a page anyway
 @property (strong, nonatomic) UIView *modalOverlay;
 @property (nonatomic) CGFloat viewOverlayAlpha;
@@ -38,6 +40,11 @@
     //The example of this controller just has one view controller added as a sub
     //subclasses may have other view controllers so this is a variable instead of hardcoded
     self.currentSubViewControllerIndex = 0;
+}
+
+#pragma Initialize Manager Array
+- (void)setManagerArrayWith:(NSMutableArray *)managerArray {
+    self.managerArray = managerArray;
 }
 
 #pragma Set Modal and Manager Settings

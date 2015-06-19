@@ -11,12 +11,11 @@
 
 @interface FilterViewController : UITableViewController<MHCollapibleViewManagerDelegate>
 
-@property (strong, nonatomic) NSMutableArray *managerArray;
-
 //Checked for Clear button since it appears on modals as well
 @property (nonatomic) BOOL modalCurrentlyShown;
 
 //Modal interaction methods
 - (IBAction)buttonTapped:(UIBarButtonItem*)sender; //modals and this viewcontroller call
 
+- (void)setManagerArrayWith:(NSMutableArray *)managerArray;
 @end
