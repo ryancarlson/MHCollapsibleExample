@@ -40,11 +40,28 @@
     //The example of this controller just has one view controller added as a sub
     //subclasses may have other view controllers so this is a variable instead of hardcoded
     self.currentSubViewControllerIndex = 0;
+    
+    self.managerArray = [[NSMutableArray alloc] init];
 }
 
-#pragma Initialize Manager Array
-- (void)setManagerArrayWith:(NSMutableArray *)managerArray {
-    self.managerArray = managerArray;
+- (void)addFilters:(NSArray *)filters
+      headerTitles:(NSArray *)headerTitles
+ topHierarchyTitle:(NSString *)topHierarchyTitle {
+    MHCollapsibleViewManager *simpleFilter = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle
+                                                                                      topHierarchyTitle:topHierarchyTitle
+                                                                                              tableView:self.tableView];
+    [simpleFilter setDataWithFilterNames:filters
+                            headerTitles:headerTitles];
+    
+    simpleFilter.delegate = self;
+
+    [self.managerArray addObject:simpleFilter];
+
+    NSUInteger currentIndex = self.managerArray.count - 1;
+
+    [simpleFilter setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_single", @"Localizable", nil)
+                                         pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_plural", @"Localizable", nil) managerIndex:currentIndex];
+    
 }
 
 #pragma Set Modal and Manager Settings

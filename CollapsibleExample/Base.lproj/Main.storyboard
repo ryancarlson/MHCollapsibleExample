@@ -50,7 +50,7 @@
         <!--Filter-->
         <scene sceneID="k6P-w5-xNi">
             <objects>
-                <tableViewController id="p1N-pv-U4j" customClass="RyansFilterViewController" sceneMemberID="viewController">
+                <tableViewController id="p1N-pv-U4j" customClass="ExampleSubclassFilterViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="yQH-jg-tba">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

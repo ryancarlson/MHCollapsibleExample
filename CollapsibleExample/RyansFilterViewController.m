@@ -17,16 +17,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    MHCollapsibleViewManager *simpleFilter = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle
-                                                                                      topHierarchyTitle:@"Simple Filter xxx"
-                                                                                              tableView:self.tableView];
-    
-    [simpleFilter setDataWithFilterNames:self.simpleFilterArray
-                            headerTitles:@[@"Simple Filter yyy"]];
-    
-    simpleFilter.delegate = self;
-    
-    [self setManagerArrayWith:[NSMutableArray arrayWithObject: simpleFilter]];
+    [self addFilters:self.simpleFilterArray
+        headerTitles:@[@"Baz"]
+   topHierarchyTitle:@"Title"];
 }
 
 - (NSArray *)simpleFilterArray {

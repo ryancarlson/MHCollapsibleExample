@@ -17,5 +17,8 @@
 //Modal interaction methods
 - (IBAction)buttonTapped:(UIBarButtonItem*)sender; //modals and this viewcontroller call
 
-- (void)setManagerArrayWith:(NSMutableArray *)managerArray;
+- (void) addFilters:(NSArray *)filters
+       headerTitles:(NSArray *)headerTitles
+  topHierarchyTitle:(NSString *)topHierarchyTitle;
+
 @end

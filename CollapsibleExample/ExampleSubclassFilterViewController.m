@@ -33,45 +33,21 @@
 }
 
 - (void)createManagersAndPopulateData{
-    
-    MHCollapsibleViewManager *labels = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Labels" tableView:self.tableView];
-    
-    //sends double array for filternames and single array for header lines
-    [labels setDataWithFilterNames:self.returnLabelArray headerTitles:@[@"Labels"]];
-    
-    MHCollapsibleViewManager *surveys = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Surveys" tableView:self.tableView];
-    
     NSArray *surveyQuestions = @[self.returnGuestbookArray, self.returnEngelsScaleArray, self.returnInternationalStudentsArray];
     NSArray *surveyList = @[@"Bridges@UCF Guestbook", @"Engels Scale", @"International Students"];
-    [surveys setDataWithFilterNames:surveyQuestions headerTitles:surveyList];
-    surveyList = nil;
-    surveyQuestions = nil;
+
+    [self addFilters:self.returnLabelArray
+        headerTitles:@[@"Labels"]
+   topHierarchyTitle:@"Label"];
     
-    MHCollapsibleViewManager *interactions = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle topHierarchyTitle:@"Interactions" tableView:self.tableView];
-    //Index 0 is title
-    [interactions setDataWithFilterNames:@[self.returnInteractionsArray] headerTitles:@[@"Interactions"]];
+    [self addFilters:surveyQuestions
+        headerTitles:surveyList
+   topHierarchyTitle:@"Surveys"];
     
-    //do not do plural, just singleton
-    //this identifies uniquely what the filters are
-    [labels setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_single", @"Localizable", nil)
-                                         pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_label_plural", @"Localizable", nil) managerIndex:0];
-    [surveys setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_question_single", @"Localizable", nil)
-                                          pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_question_plural", @"Localizable", nil)
-                                              managerIndex:1];
-    [surveys setTextIdentifierForManagerWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_single", @"Localizable", nil)
-                                            pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_survey_plural", @"Localizable", nil)];
-    [interactions setTextIdentifierAndIndexWithSingleIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_interaction_single", @"Localizable", nil)
-                                               pluralIdentifier: NSLocalizedStringFromTable(@"MHFilterViewController_Interaction_CellHeader_interaction_plural", @"Localizable", nil) managerIndex:2];
+    [self addFilters:self.returnInteractionsArray
+        headerTitles:@[@"Interactions"]
+   topHierarchyTitle:@"Interactions"];
     
-    //ManagerArray stores each controller or manager
-    labels.delegate = self;
-    surveys.delegate = self;
-    interactions.delegate = self;
-    
-    [self setManagerArrayWith:[NSMutableArray arrayWithObjects:labels, surveys, interactions, nil]];
-    
-    surveys = nil;
-    labels = nil;
 }
 
 //simply populates data since it's more complicated now
