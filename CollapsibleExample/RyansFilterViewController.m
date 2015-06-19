@@ -17,7 +17,28 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    MHCollapsibleViewManager *simpleFilter = [[MHCollapsibleViewManager alloc] initManagerWithAnimation:UITableViewRowAnimationMiddle
+                                                                                      topHierarchyTitle:@"Simple Filter xxx"
+                                                                                              tableView:self.tableView];
     
+    [simpleFilter setDataWithFilterNames:self.simpleFilterArray
+                            headerTitles:@[@"Simple Filter yyy"]];
+    
+    simpleFilter.delegate = self;
+    
+    self.managerArray = [NSMutableArray arrayWithObject: simpleFilter];
+}
+
+- (NSArray *)simpleFilterArray {
+    MHFilterLabel *foo = [[MHFilterLabel alloc] initLabelWithName:@"Foo"
+                                                          checked:NO
+                                                  interactionType:CRUCellViewInteractionTextBox];
+    
+    MHFilterLabel *bar = [[MHFilterLabel alloc] initLabelWithName:@"Bar"
+                                                          checked:NO
+                                                  interactionType:CRUCellViewInteractionTextBox];
+    
+    return @[foo,bar];
 }
 
 @end

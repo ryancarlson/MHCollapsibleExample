@@ -20,7 +20,8 @@
 @property (nonatomic) NSIndexPath *currentRowPath;
 @property (nonatomic) NSUInteger currentSubViewControllerIndex;
 
-//After save button, this array is populated with MHPackagedFilter records returned by each MHCollapsibleViewManager
+//After save button, this array is populated with MHPackagedFilter records
+//returned by each MHCollapsibleViewManager
 @property (nonatomic, strong) NSMutableArray *combinedFilters;
 
 @end
