@@ -12,22 +12,9 @@
 @interface FilterViewController : UITableViewController<MHCollapibleViewManagerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *managerArray;
-//used for picker and textfield type modals
-//since they only take up half a page anyway
-@property (strong, nonatomic) UIView *modalOverlay;
-@property (nonatomic) CGFloat viewOverlayAlpha;
-//Keeping track of the current section gives the ability to get data
-//and invoke actions from the filterviewcontroller
-@property (strong, nonatomic) MHCollapsibleSection *currentSection;
-@property (nonatomic) CRUCellViewInteractionType currentModalType;
-@property (nonatomic) NSIndexPath *currentRowPath;
-@property (nonatomic) NSUInteger currentSubViewControllerIndex;
+
 //Checked for Clear button since it appears on modals as well
 @property (nonatomic) BOOL modalCurrentlyShown;
-//After save button, this array is populated with MHPakcgaedFilter records
-//returned by each MHCollapsibleViewManager
-@property (nonatomic, strong) NSMutableArray *combinedFilters;
-
 
 //Initial methods called in viewDidLoad
 - (void)setHalfModalViewLook;
