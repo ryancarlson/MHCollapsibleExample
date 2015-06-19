@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F22A3DD1B349C4B00CBEEA2 /* RyansFilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F22A3DC1B349C4B00CBEEA2 /* RyansFilterViewController.m */; };
 		830349C31B0BBDCD000B03C0 /* MHCollapsibleSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 830349C21B0BBDCD000B03C0 /* MHCollapsibleSection.m */; };
 		8323EF391B0539C5006D2B63 /* MHFilterLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8323EF381B0539C5006D2B63 /* MHFilterLabel.m */; };
 		8389AA8B1B0A5CC1009CBAB3 /* MHTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8389AA8A1B0A5CC1009CBAB3 /* MHTableViewCell.m */; };
@@ -40,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F22A3DB1B349C4B00CBEEA2 /* RyansFilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RyansFilterViewController.h; sourceTree = "<group>"; };
+		4F22A3DC1B349C4B00CBEEA2 /* RyansFilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RyansFilterViewController.m; sourceTree = "<group>"; };
 		830349C11B0BBDCD000B03C0 /* MHCollapsibleSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHCollapsibleSection.h; sourceTree = "<group>"; };
 		830349C21B0BBDCD000B03C0 /* MHCollapsibleSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHCollapsibleSection.m; sourceTree = "<group>"; };
 		8323EF371B0539C5006D2B63 /* MHFilterLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHFilterLabel.h; sourceTree = "<group>"; };
@@ -160,6 +163,8 @@
 		83D4CB451B024BE5001C9A72 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				4F22A3DB1B349C4B00CBEEA2 /* RyansFilterViewController.h */,
+				4F22A3DC1B349C4B00CBEEA2 /* RyansFilterViewController.m */,
 				83D4CB3D1B023875001C9A72 /* ContactTableViewController.h */,
 				83D4CB3A1B023875001C9A72 /* ContactTableViewController.m */,
 				83D4CB331B023875001C9A72 /* FilterViewController.h */,
@@ -301,6 +306,7 @@
 				83D4CB431B023875001C9A72 /* ContactTableViewController.m in Sources */,
 				83D4CB101B023845001C9A72 /* CollapsibleExample.xcdatamodeld in Sources */,
 				83D4CB0D1B023845001C9A72 /* AppDelegate.m in Sources */,
+				4F22A3DD1B349C4B00CBEEA2 /* RyansFilterViewController.m in Sources */,
 				83D4CB441B023875001C9A72 /* Contact.m in Sources */,
 				83D4CB0A1B023845001C9A72 /* main.m in Sources */,
 				83DB93FE1B2B7E560079D6F4 /* ExampleSubclassFilterViewController.m in Sources */,
